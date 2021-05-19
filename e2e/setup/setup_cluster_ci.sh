@@ -1,3 +1,4 @@
+
 if curl -s --fail http://127.0.0.1:10080/kubernetes-ready; then
     exit 0
 fi
