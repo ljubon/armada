@@ -1,3 +1,5 @@
+#!/bin/bash
+
 export TYPES=Mgoogle/protobuf/any.proto=github.com/gogo/protobuf/types,\
 Mgoogle/protobuf/duration.proto=github.com/gogo/protobuf/types,\
 Mgoogle/protobuf/struct.proto=github.com/gogo/protobuf/types,\
