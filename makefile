@@ -79,8 +79,10 @@ tests:
 
 e2e-start-cluster:
 	./e2e/setup/setup_cluster_ci.sh
+	echo $(shell pwd)
 	./e2e/setup/setup_kube_config_ci.sh
 	KUBECONFIG=.kube/config kubectl apply -f ./e2e/setup/namespace-with-anonymous-user.yaml
+	sleep 5
 	#docker-compose -f ./e2e/setup/kafka/docker-compose.yaml up -d
 	docker run -d --name nats -p 4223:4223 -p 8223:8223 nats-streaming -p 4223 -m 8223
 
@@ -90,9 +92,9 @@ e2e-stop-cluster:
 	#docker-compose -f ./e2e/setup/kafka/docker-compose.yaml down
 
 .ONESHELL:
-tests-e2e: e2e-start-cluster build-docker
+tests-e2e: e2e-start-cluster build-docker 
 	docker run -d --name redis -p=6379:6379 redis
-	docker run -d --name server --network=host -p=50051:50051 \
+	docker run -d --name server --network=host \
 		-v $(shell pwd)/e2e:/e2e \
 		armada ./server --config /e2e/setup/nats/armada-config.yaml
 	docker run -d --name executor --network=host -v $(shell pwd)/.kube/config:/kube/config \
@@ -109,13 +111,15 @@ tests-e2e: e2e-start-cluster build-docker
 		docker rm executor server redis
 	}
 	trap tearDown EXIT
-	sleep 10
+	docker ps -a
 	echo -e "\nrunning test:"
-	INTEGRATION_ENABLED=true PATH=${PATH}:${PWD}/bin go test -v ./e2e/test/... -count=1
+	export PATH=${PATH}:${PWD}/bin
+	export INTEGRATION_ENABLED=true
+	go test -v ./e2e/test/... -count=1
 
 proto:
 	docker build $(dockerFlags) -t armada-proto -f ./build/proto/Dockerfile .
-	docker run -it --rm -v $(shell pwd):/go/src/armada -w /go/src/armada armada-proto ./scripts/proto.sh
+	docker run -i --rm -v $(shell pwd):/go/src/armada -w /go/src/armada armada-proto ./scripts/proto.sh
 
 generate:
 	go run github.com/rakyll/statik \
