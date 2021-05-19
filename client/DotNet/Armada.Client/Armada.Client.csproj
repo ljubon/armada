@@ -8,6 +8,7 @@
     <Description>Armada.Client is a .NET core library for communicating with Armada server implemented in C#</Description>
     <Copyright>Copyright G-Research 2019</Copyright>
     <PackageProjectUrl>https://github.com/G-Research/armada</PackageProjectUrl>
+    <RepositoryUrl>https://nuget.pkg.github.com/ljubon/index.json</RepositoryUrl>
     <PackageTags>armada gresearch g-research .net c# dotnet</PackageTags>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <RootNamespace>GResearch.Armada.Client</RootNamespace>
