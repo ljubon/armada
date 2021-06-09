@@ -52,6 +52,11 @@ jobs:
           token: ${{ secrets.RELEASE_TOKEN }}
           tag: ${{ github.event.release.tag_name }} 
 
+      - name: Update release summmary
+        run: |
+          ./scripts/add-checksum-summary.sh ${{ secrets.GITHUB_TOKEN }} ${GITHUB_REF##*/}
+        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
+
       - name: Checkout G-Research/Charts repo
         run: |
           echo "${{ secrets.CLONE_KEY }}" > id_rsa
