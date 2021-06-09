@@ -52,11 +52,16 @@ jobs:
           token: ${{ secrets.RELEASE_TOKEN }}
           tag: ${{ github.event.release.tag_name }} 
 
+      - name: Update release summmary
+        run: |
+          ./scripts/add-checksum-summary.sh ${{ secrets.GITHUB_TOKEN }} ${GITHUB_REF##*/}
+        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
+
       - name: Checkout G-Research/Charts repo
         run: |
           echo "${{ secrets.CLONE_KEY }}" > id_rsa
           chmod 400 id_rsa
-          ssh-agent bash -c 'ssh-add id_rsa; git clone git@github.com:ljubon/charts.git'
+          ssh-agent bash -c 'ssh-add id_rsa; git clone -b gh-pages git@github.com:ljubon/charts.git'
           echo "Remove key..." && rm -fv id_rsa
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
