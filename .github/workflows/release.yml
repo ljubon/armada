@@ -19,6 +19,11 @@ defaults:
   run:
     shell: bash
 
+permissions:
+  contents: write
+  deployments: write
+  packages: write
+
 jobs:
   release:
     name: Release
@@ -51,6 +56,11 @@ jobs:
           artifacts: "${{ env.GOPATH }}/src/github.com/G-Research/armada/dist/*"
           token: ${{ secrets.RELEASE_TOKEN }}
           tag: ${{ github.event.release.tag_name }} 
+
+      - name: Update release summmary
+        run: |
+          ./scripts/add-checksum-summary.sh ${{ secrets.GITHUB_TOKEN }} ${GITHUB_REF##*/}
+        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
       - name: Checkout G-Research/Charts repo
         run: |
