@@ -9,6 +9,7 @@ env:
   GO111MODULE: "on"
   GOPATH: "/home/runner/work/armada/armada/go"
   GOCACHE: "/home/runner/.cache/go-build"
+  ACTIONS_RUNNER_DEBUG: "true"
 
 on: 
   push:
@@ -61,7 +62,7 @@ jobs:
         run: |
           echo "${{ secrets.CLONE_KEY }}" > id_rsa
           chmod 400 id_rsa
-          ssh-agent bash -c 'ssh-add id_rsa; git clone git@github.com:ljubon/charts.git'
+          ssh-agent bash -c 'ssh-add id_rsa; git clone -b gh-pages git@github.com:ljubon/charts.git'
           echo "Remove key..." && rm -fv id_rsa
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
@@ -134,3 +135,40 @@ jobs:
           name: dist
           path: |
             ${{ env.GOPATH }}/src/github.com/G-Research/armada/bin/client/DotNet/*
+
+  update-charts:
+    name: Update Armada charts
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.GOPATH }}/src/github.com/G-Research/armada
+
+      - name: Trigger G-Research/charts workflow
+        run: |
+          APP_ID=120461
+          INSTALATION_ID=17535497
+          WORKFLOW_FILE="gh-pages.yml"
+          REPO="ljubon/charts"
+          BRANCH="master"
+          # dd=$(($(date +'%s * 1000 + %-N / 1000000')))
+          # expiration=$(($dd + 300000))
+          
+          echo "Install step package" && sudo apt-get update -qq -y && sudo apt-get install -qq -y curl jq && \
+          wget -q https://github.com/smallstep/cli/releases/download/v0.15.16/step-cli_0.15.16_amd64.deb && \
+          sudo dpkg -i step-cli_0.15.16_amd64.deb 2> /dev/null
+
+          echo "${{ secrets.GH_APP_PEM }}" > $(pwd)/gh_app.pem
+          chmod 400 $(pwd)/gh_app.pem
+
+          APP_TOKEN=$(step-cli crypto jwt sign --key="$(pwd)/gh_app.pem" --iss="$APP_ID" --subtle --exp="$(date --date '+10 min' +'%s')")
+          echo ${APP_TOKEN}
+
+          ACCESS_TOKEN=$(curl -s -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization:Bearer $APP_TOKEN" https://api.github.com/app/installations/$APP_INSTALLATION_ID/access_tokens | jq -r '.token')
+          echo $ACCESS_TOKEN
+
+          GH_TOKEN=$ACCESS_TOKEN gh workflow run $WORKFLOW_FILE --repo $REPO --ref $BRANCH
+          echo $GH_TOKEN
+        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
+        shell: sh
