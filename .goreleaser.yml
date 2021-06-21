@@ -1,0 +1,217 @@
+before:
+  hooks:
+    - go mod download
+    - go mod tidy
+    - go build -o ./bin/linux/server cmd/armada/main.go
+    - go build -o ./bin/linux/executor cmd/executor/main.go
+    - go build -o ./bin/linux/armada-load-tester cmd/armada-load-tester/main.go
+    - go build -o ./bin/linux/armadactl cmd/armadactl/main.go
+    - go build -o ./bin/linux/fakeexecutor cmd/fakeexecutor/main.go
+    - go build -o ./bin/linux/lookout cmd/lookout/main.go
+env: 
+  - CGO_ENABLED=0
+# mod_timestamp: '{{ .CommitTimestamp }}'
+# flags: [-trimpath]
+# ldflags: ["-s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{ .CommitDate }} -X main.builtBy=goreleaser"]
+builds:
+  - main: ./cmd/armada
+    binary: "armada"
+    id: "armada"
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+  - main: ./cmd/armadactl
+    binary: "armadactl"
+    id: "armadactl"
+    goos:
+      - linux
+      - windows
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+  - main: ./cmd/armada-load-tester
+    binary: "armada-load-tester"
+    id: "armada-load-tester"
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+  - main: ./cmd/executor
+    binary: "executor"
+    id: "executor"
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+  - main: ./cmd/fakeexecutor
+    binary: "fakeexecutor"
+    id: "fakeexecutor"
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+  - main: ./cmd/lookout
+    binary: "lookout"
+    id: "lookout"
+    goos:
+      - linux
+    goarch:
+      - amd64
+      - arm64
+archives:
+  - id: "armadactl-homebrew"
+    builds: 
+      - "armadactl"
+    format: gz
+    files:
+      - none*
+  - id: "armada"
+    builds: ["armada","lookout","fakeexecutor","executor","armada-load-tester"]
+    name_template: "{{ .Binary }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format: zip
+    wrap_in_directory: true
+    replacements:
+      darwin: Darwin
+      linux: Linux
+      windows: Windows
+    files:
+      - README.md
+      - CONTRIBUTING.md
+      - CODE_OF_CONDUCT.md
+      - LICENSE
+    allow_different_binary_count: true
+brews: 
+    # https://goreleaser.com/customization/homebrew/
+    # https://docs.brew.sh/How-to-Create-and-Maintain-a-Tap
+  - tap:
+      owner: ljubon
+      name: homebrew-armada
+      token: "{{ .Env.GITHUB_PAT }}"
+    ids:
+    - "armadactl-homebrew"
+    folder: Formula
+    homepage: "https://github.com/ljubon/homebrew-armada"
+    description: "Example binary distribution using homebrew"
+    test: |
+      system "#{bin}/armadactl help"
+    install: |
+      bin.install "armadactl"
+    commit_author:
+      name: Ljubo Nikolic
+      email: ljubonikolic@gmail.com
+nfpms:
+  - id: "armadactl"
+    package_name: armada
+    file_name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    builds:
+      - armadactl
+snapshot:
+  # Allows you to change the name of the generated snapshot
+  # Note that some pipes require this to be semantic version compliant (nfpm, for example).
+  name_template: "{{ .Tag }}-SNAPSHOT-{{ .ShortCommit }}"
+checksum:
+  name_template: '{{ .ProjectName }}_{{ .Version }}_checksums.txt'
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+    - go mod tidy
+# https://goreleaser.com/customization/docker/
+# dockers: 
+#   - image_templates: 
+#     - "ljubon/armada:{{ .Version }}"
+#     - "ljubon/armada:latest"
+#     dockerfile: ./build/armada/Dockerfile
+#     build_flag_templates:
+#     - --label=org.opencontainers.image.title={{ .ProjectName }}
+#     - --label=org.opencontainers.image.description={{ .ProjectName }}
+#     - --label=org.opencontainers.image.url=https://github.com/ljubon/armada
+#     - --label=org.opencontainers.image.source=https://github.com/ljubon/armada
+#     - --label=org.opencontainers.image.version={{ .Version }}
+#     - --label=org.opencontainers.image.revision={{ .FullCommit }}
+#     use_buildx: true
+#     extra_files:
+#       - ./config/armada/config.yaml
+#       - ./bin/linux/server
+#   - image_templates: 
+#     - "ljubon/armada-executor:{{ .Version }}"
+#     - "ljubon/armada-executor:latest"
+#     dockerfile: ./build/executor/Dockerfile
+#     build_flag_templates:
+#     - --label=org.opencontainers.image.title={{ .ProjectName }}
+#     - --label=org.opencontainers.image.description={{ .ProjectName }}
+#     - --label=org.opencontainers.image.url=https://github.com/ljubon/armada
+#     - --label=org.opencontainers.image.source=https://github.com/ljubon/armada
+#     - --label=org.opencontainers.image.version={{ .Version }}
+#     - --label=org.opencontainers.image.revision={{ .FullCommit }}
+#     use_buildx: true
+#     extra_files:
+#       - ./config/executor/config.yaml
+#       - ./bin/linux/executor
+#   - image_templates: 
+#     - "ljubon/armada-load-tester:{{ .Version }}"
+#     - "ljubon/armada-load-tester:latest"
+#     dockerfile: ./build/armada-load-tester/Dockerfile
+#     build_flag_templates:
+#     - --label=org.opencontainers.image.title={{ .ProjectName }}
+#     - --label=org.opencontainers.image.description={{ .ProjectName }}
+#     - --label=org.opencontainers.image.url=https://github.com/ljubon/armada
+#     - --label=org.opencontainers.image.source=https://github.com/ljubon/armada
+#     - --label=org.opencontainers.image.version={{ .Version }}
+#     - --label=org.opencontainers.image.revision={{ .FullCommit }}
+#     use_buildx: true
+#     extra_files:
+#       - ./bin/linux/armada-load-tester
+#   - image_templates: 
+#     - "ljubon/armadactl:{{ .Version }}"
+#     - "ljubon/armadactl:latest"
+#     dockerfile: ./build/armadactl/Dockerfile
+#     build_flag_templates:
+#     - --label=org.opencontainers.image.title={{ .ProjectName }}
+#     - --label=org.opencontainers.image.description={{ .ProjectName }}
+#     - --label=org.opencontainers.image.url=https://github.com/ljubon/armada
+#     - --label=org.opencontainers.image.source=https://github.com/ljubon/armada
+#     - --label=org.opencontainers.image.version={{ .Version }}
+#     - --label=org.opencontainers.image.revision={{ .FullCommit }}
+#     use_buildx: true
+#     extra_files:
+#       - ./bin/linux/armadactl
+#   - image_templates: 
+#     - "ljubon/armada-fakeexecutor:{{ .Version }}"
+#     - "ljubon/armada-fakeexecutor:latest"
+#     dockerfile: ./build/fakeexecutor/Dockerfile
+#     build_flag_templates:
+#     - --label=org.opencontainers.image.title={{ .ProjectName }}
+#     - --label=org.opencontainers.image.description={{ .ProjectName }}
+#     - --label=org.opencontainers.image.url=https://github.com/ljubon/armada
+#     - --label=org.opencontainers.image.source=https://github.com/ljubon/armada
+#     - --label=org.opencontainers.image.version={{ .Version }}
+#     - --label=org.opencontainers.image.revision={{ .FullCommit }}
+#     use_buildx: true
+#     extra_files:
+#       - ./bin/linux/fakeexecutor
+#       - ./config/executor/config.yaml
+#   - image_templates: 
+#     - "ljubon/armada-lookout:{{ .Version }}"
+#     - "ljubon/armada-lookout:latest"
+#     dockerfile: ./build/lookout/Dockerfile
+#     build_flag_templates:
+#     - --label=org.opencontainers.image.title={{ .ProjectName }}
+#     - --label=org.opencontainers.image.description={{ .ProjectName }}
+#     - --label=org.opencontainers.image.url=https://github.com/ljubon/armada
+#     - --label=org.opencontainers.image.source=https://github.com/ljubon/armada
+#     - --label=org.opencontainers.image.version={{ .Version }}
+#     - --label=org.opencontainers.image.revision={{ .FullCommit }}
+#     use_buildx: true
+#     extra_files:
+#       - internal/lookout/ui/build/
+#       - ./bin/linux/lookout
+#       - ./config/lookout/config.yaml
