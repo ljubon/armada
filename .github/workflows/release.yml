@@ -25,99 +25,99 @@ jobs:
         uses: actions/checkout@v2
         with:
           path: ${{ env.GOPATH }}/src/github.com/G-Research/armada
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.16
+
+      - name: Docker Login
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERUSERNAME }}
+          password: ${{ secrets.DOCKERTOKEN }}
       
-      - name: Build armadactl release artifacts
-        run: |
-          TAG=${GITHUB_REF##*/}
-          make build-armadactl-release RELEASE_VERSION=${TAG}
-        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
-
-      - name: Archive production artifacts  
-        uses: actions/upload-artifact@v2
+      - name: Run GoReleaser
+        uses: goreleaser/goreleaser-action@v2
         with:
-          name: dist
-          path: |
-            ${{ env.GOPATH }}/src/github.com/G-Research/armada/dist/*
-
-      #### Publish release
-      - name: Upload artifacts to Github release #TODO change RELEASE_TOKEN
-        uses: ncipollo/release-action@v1.8.6
-        with:
-          artifacts: "${{ env.GOPATH }}/src/github.com/G-Research/armada/dist/*"
-          token: ${{ secrets.RELEASE_TOKEN }}
-          tag: ${{ github.event.release.tag_name }} 
-
-      - name: Update release summmary
-        run: |
-          ./scripts/add-checksum-summary.sh ${{ secrets.GITHUB_TOKEN }} ${GITHUB_REF##*/}
-        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
-
-  release-dotnet-client:
-    name: Release DotNet client
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-        with:
-          path: ${{ env.GOPATH }}/src/github.com/G-Research/armada
-
-      - uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: '3.0.101' 
-          source-url: "https://nuget.pkg.github.com/ljubon/index.json"
+          distribution: goreleaser
+          version: latest
+          args: release --rm-dist
+          workdir: ${{ env.GOPATH }}/src/github.com/G-Research/armada
         env:
-          NUGET_AUTH_TOKEN: ${{ secrets.PAT_LJUBOOPS }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Release dotnet client #TODO change RepositoryUrl in *.csproj, replace PAT_LJUBOOPS
-        run: |
-          RELEASE_TAG_RAW=${GITHUB_REF##*/}
-          RELEASE_TAG=${RELEASE_TAG_RAW:1}
+      - name: Clear
+        if: always()
+        run: rm -f ${HOME}/.docker/config.json
 
-          echo $RELEASE_TAG
-          ls -larth
-          cat /home/runner/work/armada/nuget.config
-          dotnet pack client/DotNet/Armada.Client/Armada.Client.csproj -c Release -p:PackageVersion=${RELEASE_TAG} -o ./bin/client/DotNet
-          dotnet nuget push ./bin/client/DotNet/G-Research.Armada.Client.${RELEASE_TAG}.nupkg --api-key ${{ secrets.PAT_LJUBOOPS }}
-        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
+  # release-dotnet-client:
+  #   name: Release DotNet client
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
+  #       with:
+  #         path: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
-      - name: Archive production artifacts
-        uses: actions/upload-artifact@v2
-        with:
-          name: dist
-          path: |
-            ${{ env.GOPATH }}/src/github.com/G-Research/armada/bin/client/DotNet/*
+  #     - uses: actions/setup-dotnet@v1
+  #       with:
+  #         dotnet-version: '3.0.101' 
+  #         source-url: "https://nuget.pkg.github.com/ljubon/index.json"
+  #       env:
+  #         NUGET_AUTH_TOKEN: ${{ secrets.PAT_LJUBOOPS }}
 
-  update-charts:
-    needs: [release, release-dotnet-client]
-    name: Publish Armada charts - ${GITHUB_REF##*/}
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Install Step
-        env: 
-          VERSION: 0.15.16
-        run: |
-          curl -sLO https://github.com/smallstep/cli/releases/download/v${VERSION}/step-cli_${VERSION}_amd64.deb
-          sudo dpkg -i step-cli_${VERSION}_amd64.deb
-          rm step-cli_${VERSION}_amd64.deb
+  #     - name: Release dotnet client #TODO change RepositoryUrl in *.csproj, replace PAT_LJUBOOPS
+  #       run: |
+  #         RELEASE_TAG_RAW=${GITHUB_REF##*/}
+  #         RELEASE_TAG=${RELEASE_TAG_RAW:1}
 
-      - name: Acquire access token #TODO Change APP_ID, APP_PEM, INSTALLATION_ID
-        id: token
-        env: 
-          APP_ID: ${{ secrets.APP_ID }}
-          APP_PEM: ${{ secrets.GH_APP_PEM }}
-          INSTALLATION_ID: ${{ secrets.INSTALLATION_ID }}
-        run: |
-          echo "$APP_PEM" > key.pem
-          trap "rm -f key.pem" EXIT
-          APP_TOKEN=$(step crypto jwt sign --key key.pem --issuer $APP_ID --expiration $(date --date '+5 min' +'%s') --subtle </dev/null)
-          ACCESS_TOKEN=$(curl -s -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization:Bearer $APP_TOKEN" https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens | jq -r '.token')
-          echo "::set-output name=token::$ACCESS_TOKEN"
+  #         echo $RELEASE_TAG
+  #         ls -larth
+  #         cat /home/runner/work/armada/nuget.config
+  #         dotnet pack client/DotNet/Armada.Client/Armada.Client.csproj -c Release -p:PackageVersion=${RELEASE_TAG} -o ./bin/client/DotNet
+  #         dotnet nuget push ./bin/client/DotNet/G-Research.Armada.Client.${RELEASE_TAG}.nupkg --api-key ${{ secrets.PAT_LJUBOOPS }}
+  #       working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
-      - name: Trigger remote workflow #TODO Change TOKEN, REPO, REF, project
-        env: 
-          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
-          REPO: ljubon/charts
-          REF: test-dispatcher
-          WORKFLOW: gh-pages.yml
-        run: |
-          gh workflow run $WORKFLOW --repo $REPO --ref $REF --field project="ljubon/armada" --field ref="${GITHUB_REF##*/}"
+  #     - name: Archive production artifacts
+  #       uses: actions/upload-artifact@v2
+  #       with:
+  #         name: dist
+  #         path: |
+  #           ${{ env.GOPATH }}/src/github.com/G-Research/armada/bin/client/DotNet/*
+
+  # update-charts:
+  #   needs: [release, release-dotnet-client]
+  #   name: Publish Armada charts - ${GITHUB_REF##*/}
+  #   runs-on: ubuntu-20.04
+  #   steps:
+  #     - name: Install Step
+  #       env: 
+  #         VERSION: 0.15.16
+  #       run: |
+  #         curl -sLO https://github.com/smallstep/cli/releases/download/v${VERSION}/step-cli_${VERSION}_amd64.deb
+  #         sudo dpkg -i step-cli_${VERSION}_amd64.deb
+  #         rm step-cli_${VERSION}_amd64.deb
+
+  #     - name: Acquire access token #TODO Change APP_ID, APP_PEM, INSTALLATION_ID
+  #       id: token
+  #       env: 
+  #         APP_ID: ${{ secrets.APP_ID }}
+  #         APP_PEM: ${{ secrets.GH_APP_PEM }}
+  #         INSTALLATION_ID: ${{ secrets.INSTALLATION_ID }}
+  #       run: |
+  #         echo "$APP_PEM" > key.pem
+  #         trap "rm -f key.pem" EXIT
+  #         APP_TOKEN=$(step crypto jwt sign --key key.pem --issuer $APP_ID --expiration $(date --date '+5 min' +'%s') --subtle </dev/null)
+  #         ACCESS_TOKEN=$(curl -s -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization:Bearer $APP_TOKEN" https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens | jq -r '.token')
+  #         echo "::set-output name=token::$ACCESS_TOKEN"
+
+  #     - name: Trigger remote workflow #TODO Change TOKEN, REPO, REF, project
+  #       env: 
+  #         GITHUB_TOKEN: ${{ steps.token.outputs.token }}
+  #         REPO: ljubon/charts
+  #         REF: test-dispatcher
+  #         WORKFLOW: gh-pages.yml
+  #       run: |
+  #         gh workflow run $WORKFLOW --repo $REPO --ref $REF --field project="ljubon/armada" --field ref="${GITHUB_REF##*/}"
