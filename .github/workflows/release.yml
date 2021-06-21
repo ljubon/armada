@@ -59,6 +59,7 @@ jobs:
           workdir: ${{ env.GOPATH }}/src/github.com/G-Research/armada
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_PAT: ${{ secrets.PAT_LJUBOOPS }}
 
       - name: Clear
         if: always()
@@ -101,7 +102,7 @@ jobs:
 
   update-charts:
     needs: [release, release-dotnet-client]
-    name: Publish Armada charts - ${GITHUB_REF##*/}
+    name: Publish Armada charts
     runs-on: ubuntu-20.04
     steps:
       - name: Install Step
