@@ -8,7 +8,7 @@ require (
 	github.com/alicebob/miniredis v2.5.0+incompatible
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
-	github.com/doug-martin/goqu/v9 v9.10.0
+	github.com/doug-martin/goqu/v9 v9.13.0
 	github.com/go-ldap/ldap/v3 v3.3.0
 	github.com/go-openapi/analysis v0.19.10
 	github.com/go-openapi/errors v0.19.4 // indirect
@@ -32,7 +32,7 @@ require (
 	github.com/instrumenta/kubeval v0.0.0-20190918223246-8d013ec9fc56
 	github.com/jcmturner/gokrb5/v8 v8.4.2-0.20201112171129-78f56934d598
 	github.com/kr/text v0.2.0 // indirect
-	github.com/lib/pq v1.3.0
+	github.com/lib/pq v1.10.1
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
@@ -51,7 +51,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.6.2
-	github.com/stretchr/testify v1.6.1
+	github.com/stretchr/testify v1.7.0
 	github.com/weaveworks/promrus v1.2.0
 	github.com/yuin/gopher-lua v0.0.0-20190514113301-1cd887cd7036 // indirect
 	go.mongodb.org/mongo-driver v1.3.1 // indirect
