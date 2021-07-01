@@ -20,7 +20,7 @@ require (
 	github.com/go-openapi/swag v0.19.8 // indirect
 	github.com/go-openapi/validate v0.19.7 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible
-	github.com/gogo/protobuf v1.3.1
+	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.4.3
 	github.com/gomodule/redigo v2.0.0+incompatible // indirect
 	github.com/google/martian v2.1.0+incompatible
@@ -31,7 +31,6 @@ require (
 	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/instrumenta/kubeval v0.0.0-20190918223246-8d013ec9fc56
 	github.com/jcmturner/gokrb5/v8 v8.4.2-0.20201112171129-78f56934d598
-	github.com/kr/text v0.2.0 // indirect
 	github.com/lib/pq v1.3.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/mitchellh/mapstructure v1.1.2
@@ -63,7 +62,7 @@ require (
 	gopkg.in/ini.v1 v1.54.0 // indirect
 	gopkg.in/square/go-jose.v2 v2.4.1 // indirect
 	k8s.io/api v0.20.5
-	k8s.io/apimachinery v0.20.5
+	k8s.io/apimachinery v0.21.2
 	k8s.io/client-go v0.20.5
 	k8s.io/component-base v0.20.5
 	k8s.io/kubelet v0.20.5
