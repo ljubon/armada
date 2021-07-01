@@ -12,7 +12,7 @@ require (
 	github.com/go-ldap/ldap/v3 v3.3.0
 	github.com/go-openapi/analysis v0.19.10
 	github.com/go-openapi/errors v0.19.4 // indirect
-	github.com/go-openapi/jsonreference v0.19.3
+	github.com/go-openapi/jsonreference v0.19.6
 	github.com/go-openapi/loads v0.19.5
 	github.com/go-openapi/runtime v0.19.12
 	github.com/go-openapi/spec v0.19.7
@@ -55,7 +55,6 @@ require (
 	github.com/weaveworks/promrus v1.2.0
 	github.com/yuin/gopher-lua v0.0.0-20190514113301-1cd887cd7036 // indirect
 	go.mongodb.org/mongo-driver v1.3.1 // indirect
-	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect
 	google.golang.org/genproto v0.0.0-20201110150050-8816d57aaa9a
