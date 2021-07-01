@@ -10,15 +10,11 @@ require (
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
 	github.com/doug-martin/goqu/v9 v9.10.0
 	github.com/go-ldap/ldap/v3 v3.3.0
-	github.com/go-openapi/analysis v0.19.10
-	github.com/go-openapi/errors v0.19.4 // indirect
-	github.com/go-openapi/jsonreference v0.19.3
-	github.com/go-openapi/loads v0.19.5
-	github.com/go-openapi/runtime v0.19.12
-	github.com/go-openapi/spec v0.19.7
-	github.com/go-openapi/strfmt v0.19.5 // indirect
-	github.com/go-openapi/swag v0.19.8 // indirect
-	github.com/go-openapi/validate v0.19.7 // indirect
+	github.com/go-openapi/analysis v0.19.16
+	github.com/go-openapi/jsonreference v0.19.5
+	github.com/go-openapi/loads v0.20.2
+	github.com/go-openapi/runtime v0.19.24
+	github.com/go-openapi/spec v0.20.1
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gogo/protobuf v1.3.1
 	github.com/golang/protobuf v1.4.3
@@ -31,16 +27,14 @@ require (
 	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/instrumenta/kubeval v0.0.0-20190918223246-8d013ec9fc56
 	github.com/jcmturner/gokrb5/v8 v8.4.2-0.20201112171129-78f56934d598
-	github.com/kr/text v0.2.0 // indirect
 	github.com/lib/pq v1.3.0
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/mitchellh/mapstructure v1.1.2
+	github.com/mitchellh/mapstructure v1.4.1
 	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
 	github.com/nats-io/nats-streaming-server v0.17.0 // indirect
 	github.com/nats-io/nats.go v1.9.2
 	github.com/nats-io/stan.go v0.6.0
 	github.com/oklog/ulid v1.3.1
-	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
 	github.com/prometheus/client_golang v1.7.1
 	github.com/rakyll/statik v0.1.7
@@ -54,7 +48,6 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/weaveworks/promrus v1.2.0
 	github.com/yuin/gopher-lua v0.0.0-20190514113301-1cd887cd7036 // indirect
-	go.mongodb.org/mongo-driver v1.3.1 // indirect
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect
 	golang.org/x/oauth2 v0.0.0-20200107190931-bf48bf16ab8d
 	golang.org/x/sys v0.0.0-20210510120138-977fb7262007 // indirect
