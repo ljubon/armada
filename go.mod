@@ -20,7 +20,7 @@ require (
 	github.com/go-openapi/swag v0.19.8 // indirect
 	github.com/go-openapi/validate v0.19.7 // indirect
 	github.com/go-redis/redis v6.15.9+incompatible
-	github.com/gogo/protobuf v1.3.1
+	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.4.3
 	github.com/gomodule/redigo v2.0.0+incompatible // indirect
 	github.com/google/martian v2.1.0+incompatible
@@ -37,8 +37,8 @@ require (
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/nats-io/nats-server/v2 v2.1.6 // indirect
 	github.com/nats-io/nats-streaming-server v0.17.0 // indirect
-	github.com/nats-io/nats.go v1.9.2
-	github.com/nats-io/stan.go v0.6.0
+	github.com/nats-io/nats.go v1.11.0
+	github.com/nats-io/stan.go v0.9.0
 	github.com/oklog/ulid v1.3.1
 	github.com/pelletier/go-toml v1.6.0 // indirect
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
