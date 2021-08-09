@@ -41,13 +41,15 @@ jobs:
         with:
           path: ${{ env.GOPATH }}/src/github.com/G-Research/armada
           
-      - name: Run ineffassign
+      - name: Check TypeScript formatting
         run: |
-          cd /tmp
-          go install github.com/gordonklaus/ineffassign@latest
-          cd ${{ env.GOPATH }}/src/github.com/G-Research/armada
-          echo "Run ineffassign..."
-          ineffassign ./...
+          cd ./internal/lookout/ui && npm install && npm run fmt || exit 1
+          exit $(git status -s -uno | wc -l)
+
+      - name: Check Go formatting
+        run: |
+          go install golang.org/x/tools/cmd/goimports@v0.1.1
+          if [ $(goimports -l -local "github.com/G-Research/armada" | wc -l) -eq 0 ]; then exit 0; else exit 1; fi
 
       - name: Check formatting
         run: |
