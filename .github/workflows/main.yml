@@ -187,4 +187,7 @@ jobs:
 
           docker tag armada-lookout ljubon/armada-lookout-dev:${TAG}
           docker push ljubon/armada-lookout-dev:${TAG}
+
+          docker tag armada-binoculars ljubon/armada-binoculars-dev:${TAG}
+          docker push ljubon/armada-binoculars-dev:${TAG}
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
