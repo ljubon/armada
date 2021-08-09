@@ -43,8 +43,9 @@ jobs:
           
       - name: Check TypeScript formatting
         run: |
-          cd ./internal/lookout/ui && npm install && npm run fmt || exit 1
+          npm install && npm run fmt || exit 1
           exit $(git status -s -uno | wc -l)
+        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada/internal/lookout/ui
 
       - name: Check Go formatting
         run: |
