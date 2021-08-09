@@ -81,6 +81,9 @@ jobs:
           docker push ljubon/armada-binoculars:${RELEASE_TAG}
 
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
+        env: #TODO change DOCKERTOKEN and DOCKERUSERNAME
+          dockerToken: ${{ secrets.DOCKERTOKEN }}
+          dockerUsername: ${{ secrets.DOCKERUSERNAME }}
 
       - name: Update release summmary
         run: |
