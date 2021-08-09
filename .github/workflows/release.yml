@@ -80,6 +80,7 @@ jobs:
           docker tag ljubon/armada-binoculars-dev:${TAG} ljubon/armada-binoculars:${RELEASE_TAG}
           docker push ljubon/armada-binoculars:${RELEASE_TAG}
 
+          rm -v /home/runner/.docker/config.json
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
         env: #TODO change DOCKERTOKEN and DOCKERUSERNAME
           dockerToken: ${{ secrets.DOCKERTOKEN }}

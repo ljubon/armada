@@ -191,4 +191,6 @@ jobs:
 
           docker tag armada-binoculars ljubon/armada-binoculars-dev:${TAG}
           docker push ljubon/armada-binoculars-dev:${TAG}
+
+          rm -v /home/runner/.docker/config.json
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
