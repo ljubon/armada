@@ -193,7 +193,11 @@ jobs:
 
       - run:
           name: Build & Run e2e tests
-          command: make build-ci tests-e2e
+          command: make build-docker-e2e-tests tests-e2e
+
+      - run:
+          name: Delete cluster
+          command: make e2e-delete-cluster
 
       - run: cat go.sum
 
