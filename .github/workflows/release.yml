@@ -57,13 +57,7 @@ jobs:
           fi
 
           TAG=${GITHUB_SHA}
-          BRANCH=${GITHUB_REF##*/}
           RELEASE_TAG=${GITHUB_REF##*/}
-
-          if [ ${BRANCH} != master ]
-            then
-              TAG=branch-$(echo -n ${BRANCH} | sed 's|/|-|g')-${GITHUB_SHA}
-          fi
 
           echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
 
@@ -95,18 +89,16 @@ jobs:
     name: Publish Armada charts
     runs-on: ubuntu-20.04
     steps:
-
-      # Tmate session - tshoot actions
-      - name: Setup tmate session
-        if: always()
-        uses: mxschmitt/action-tmate@v3
+      - name: Checkout code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
       - name: Set .ssh directory and GIT_SSH_COMMAND
         run: |
           export SSH_CONFIG_DIR="/home/runner/.ssh"
           export GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=$SSH_CONFIG_DIR/known_hosts"
-          
-          mkdir -p $SSH_CONFIG_DIR
+
           echo 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDqvzAKi2JmyuqM3STjgKbK3nTJAc9aSPwqtjVqEql3ytITmyYGoUjnyRL+64loTDK2lifkfi2ypDXFLefWp3OVW/hedDd2/AaW1F4PbUzje/7xF7jnHlRyNPrirDdXy9+MqLACQ+8ulqH8tBnKr5zEow6Gu4uqHbP6RYOQv+etDZ528VNSlamz93FtLKCaN5wNFAIvpBPiJTsHEhs2FqsYUrIzN/6izjlM1ZQAhy6ooE6CM0ltcZN2uN2SsSegD90fwQKans+oFtOQyyPd6ByA5wt3pEDBp69KcTFthcBDhiT8BwvpqjcH5TruBhMq8WN0At1A0AljsozwzUgJM5tN ljubo.nikolic' >> $SSH_CONFIG_DIR/known_hosts
           eval "$(ssh-agent -s)"
           echo -e "${{ secrets.LJUBON_ARMADA_CHART_UPDATE_KEY }}" | ssh-add - > /dev/null
@@ -132,7 +124,7 @@ jobs:
         run: |
           RELEASE_TAG=${GITHUB_REF##*/}
           git checkout -b github-armada_$RELEASE_TAG
-          git add ./armada
+          git add ./armada index.yaml
           git -c user.name='Ljubo Nikolic' -c user.email=ljubonikolic@gmail.com commit -qam "Pushing new helm charts at version $RELEASE_TAG"
           eval "$(ssh-agent -s)"
           echo -e "${{ secrets.LJUBON_ARMADA_CHART_UPDATE_KEY }}" | ssh-add - > /dev/null
