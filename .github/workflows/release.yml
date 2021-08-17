@@ -57,13 +57,7 @@ jobs:
           fi
 
           TAG=${GITHUB_SHA}
-          BRANCH=${GITHUB_REF##*/}
           RELEASE_TAG=${GITHUB_REF##*/}
-
-          if [ ${BRANCH} != master ]
-            then
-              TAG=branch-$(echo -n ${BRANCH} | sed 's|/|-|g')-${GITHUB_SHA}
-          fi
 
           echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
 
