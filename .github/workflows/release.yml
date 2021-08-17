@@ -57,7 +57,13 @@ jobs:
           fi
 
           TAG=${GITHUB_SHA}
+          BRANCH=${GITHUB_REF##*/}
           RELEASE_TAG=${GITHUB_REF##*/}
+
+          if [ ${BRANCH} != master ]
+            then
+              TAG=branch-$(echo -n ${BRANCH} | sed 's|/|-|g')-${GITHUB_SHA}
+          fi
 
           echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
 
@@ -89,6 +95,12 @@ jobs:
     name: Publish Armada charts
     runs-on: ubuntu-20.04
     steps:
+
+      # Tmate session - tshoot actions
+      - name: Setup tmate session
+        if: always()
+        uses: mxschmitt/action-tmate@v3
+
       - name: Set .ssh directory and GIT_SSH_COMMAND
         run: |
           export SSH_CONFIG_DIR="/home/runner/.ssh"

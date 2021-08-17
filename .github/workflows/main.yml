@@ -160,10 +160,10 @@ jobs:
           TAG=${GITHUB_SHA}
           BRANCH=${GITHUB_REF##*/}
 
-          # if [ ${BRANCH} != master ]
-          #   then
-          #     TAG=branch-$(echo -n ${BRANCH} | sed 's|/|-|g')-${GITHUB_SHA}
-          # fi
+          if [ ${BRANCH} != master ]
+            then
+              TAG=branch-$(echo -n ${BRANCH} | sed 's|/|-|g')-${GITHUB_SHA}
+          fi
 
           echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
 
