@@ -10,10 +10,10 @@ require (
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
 	github.com/doug-martin/goqu/v9 v9.15.1
 	github.com/go-ldap/ldap/v3 v3.4.1
-	github.com/go-openapi/analysis v0.19.16
+	github.com/go-openapi/analysis v0.20.1
 	github.com/go-openapi/jsonreference v0.19.6
 	github.com/go-openapi/loads v0.20.2
-	github.com/go-openapi/runtime v0.19.24
+	github.com/go-openapi/runtime v0.19.30
 	github.com/go-openapi/spec v0.20.3
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gogo/protobuf v1.3.2
@@ -34,11 +34,11 @@ require (
 	github.com/nats-io/stan.go v0.10.0
 	github.com/oklog/ulid v1.3.1
 	github.com/pquerna/cachecontrol v0.0.0-20180517163645-1555304b9b35 // indirect
-	github.com/prometheus/client_golang v1.7.1
+	github.com/prometheus/client_golang v1.11.0
 	github.com/rakyll/statik v0.1.7
 	github.com/segmentio/kafka-go v0.3.5
 	github.com/sirupsen/logrus v1.8.1
-	github.com/spf13/cobra v0.0.7
+	github.com/spf13/cobra v1.1.3
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
@@ -48,9 +48,9 @@ require (
 	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c
 	google.golang.org/grpc v1.40.0
 	gopkg.in/square/go-jose.v2 v2.4.1 // indirect
-	k8s.io/api v0.20.5
-	k8s.io/apimachinery v0.20.5
-	k8s.io/client-go v0.20.5
-	k8s.io/component-base v0.20.5
+	k8s.io/api v0.22.0
+	k8s.io/apimachinery v0.22.0
+	k8s.io/client-go v0.22.0
+	k8s.io/component-base v0.22.0
 	k8s.io/kubelet v0.20.5
 )
