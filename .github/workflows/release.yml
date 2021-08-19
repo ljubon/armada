@@ -85,53 +85,6 @@ jobs:
           rm -v /home/runner/.docker/config.json
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
-  update-charts:
-    needs: [release]
-    name: Publish Armada charts
-    runs-on: ubuntu-20.04
-    steps:
-      - name: Checkout Armada
-        uses: actions/checkout@v2
-        with:
-          path: ${{ env.GOPATH }}/src/github.com/G-Research/armada
-
-      - name: Clone chart repo, update version and image tag to match current $RELEASE_TAG
-        run: |
-          mkdir -p ${{ env.GOPATH }}/src/github.com/G-Research/charts
-          mkdir -p $HOME/.ssh && echo "dummy" > $HOME/.ssh/known_hosts
-          
-          echo "github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" > $HOME/.ssh/known_hosts
-          eval "$(ssh-agent -s)"
-          echo -e "${{ secrets.ARMADA_CHART_UPDATE_KEY }}" | ssh-add - > /dev/null
-          git clone -q git@github.com:G-Research/charts.git charts/
-          cd charts/
-          git remote -v
-
-          RELEASE_TAG=${GITHUB_REF##*/}
-          echo release version is $RELEASE_TAG
-          find ../armada \( -name "Chart.yaml" -o -name "values.yaml" \) -exec sed -i s/LATEST/$RELEASE_TAG/ {} +
-
-          helm package ../armada/deployment/armada/ -d armada/
-          helm package ../armada/deployment/executor -d armada/
-          helm package ../armada/deployment/executor-cluster-monitoring/ -d armada/
-          helm package ../armada/deployment/lookout/ -d armada/
-          helm package ../armada/deployment/lookout-migration/ -d armada/
-          helm package ../armada/deployment/binoculars/ -d armada/
-          helm repo index .
-        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research
-
-      - name: Commit and push updated charts
-        run: |
-          RELEASE_TAG=${GITHUB_REF##*/}
-          cd charts
-          git checkout -b github-armada_$RELEASE_TAG
-          git add ./armada index.yaml
-          git -c user.name='GR OSS' -c user.email=github@gr-oss.io commit -qam "Pushing new helm charts at version $RELEASE_TAG"
-          eval "$(ssh-agent -s)"
-          echo -e "${{ secrets.ARMADA_CHART_UPDATE_KEY }}" | ssh-add - > /dev/null
-          git push -q origin HEAD
-        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/charts
-
   release-dotnet-client:
     name: Release DotNet client
     runs-on: ubuntu-20.04
@@ -164,3 +117,38 @@ jobs:
         with:
           name: dist
           path: ${{ env.GOPATH }}/src/github.com/G-Research/armada/bin/client/DotNet/*
+
+  update-charts:
+    needs: [release, release-dotnet-client]
+    name: Publish Armada charts
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install Step
+        env: 
+          VERSION: 0.15.16
+        run: |
+          curl -sLO https://github.com/smallstep/cli/releases/download/v${VERSION}/step-cli_${VERSION}_amd64.deb
+          sudo dpkg -i step-cli_${VERSION}_amd64.deb
+          rm step-cli_${VERSION}_amd64.deb
+
+      - name: Acquire access token
+        id: token
+        env: 
+          APP_ID: ${{ secrets.APP_ID }}
+          APP_PEM: ${{ secrets.GH_APP_PEM }}
+          INSTALLATION_ID: ${{ secrets.INSTALLATION_ID }}
+        run: |
+          echo "$APP_PEM" > key.pem
+          trap "rm -f key.pem" EXIT
+          APP_TOKEN=$(step crypto jwt sign --key key.pem --issuer $APP_ID --expiration $(date --date '+5 min' +'%s') --subtle </dev/null)
+          ACCESS_TOKEN=$(curl -s -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization:Bearer $APP_TOKEN" https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens | jq -r '.token')
+          echo "::set-output name=token::$ACCESS_TOKEN"
+
+      - name: Trigger remote workflow
+        env: 
+          GITHUB_TOKEN: ${{ steps.token.outputs.token }}
+          REPO: ljubon/charts
+          REF: test-dispatcher
+          WORKFLOW: gh-pages.yml
+        run: |
+          gh workflow run $WORKFLOW --repo $REPO --ref $REF --field project="ljubon/armada" --field ref="${GITHUB_REF##*/}"
