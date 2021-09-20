@@ -5,10 +5,12 @@ env:
   GOPATH: "/home/runner/work/armada/armada/go"
   GOCACHE: "/home/runner/.cache/go-build"
 
-on: 
-  push:
-    tags: 
-      - 'v*'
+on:
+  workflow_run:
+    workflows:
+      - Protected
+    types:
+      - completed
 
 defaults:
   run:

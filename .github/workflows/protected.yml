@@ -1,0 +1,58 @@
+name: Protected
+
+on: 
+  push:
+    tags: 
+      - 'v*'
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release:
+    name: Check
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Checkout code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: '0'
+          ref: feature/gh-protected-release # master
+
+      # Tmate session - tshoot actions
+      # - name: Setup tmate session
+      #   if: always()
+      #   uses: mxschmitt/action-tmate@v3
+
+      # Option 1: If tag commit has origin from any tip of master
+      - name: Check if tag is created from master
+        run: |
+          tagSHA=$(git rev-parse ${GITHUB_REF##*/})
+          if [ $(git branch --no-abbrev --no-color --contains $tagSHA); then
+              echo "Tag is not created from master branch"
+              exit 1
+          else
+            echo "Tag is created from master branch"
+          fi
+
+      # Tmate session - tshoot actions
+      # - name: Setup tmate session
+      #   if: always()
+      #   uses: mxschmitt/action-tmate@v3
+
+
+      # Option 2: If tag commit equals HEAD of master
+      # - name: Check origin of tag
+      #   run: |
+      #     masterSHA=$(git rev-parse feature/gh-protected-release)
+      #     tagSHA=$(git rev-parse ${GITHUB_REF##*/})
+
+
+      #     if [ "$masterSHA" == "$tagSHA" ]; then
+      #         echo "Tag is created from master branch"
+      #     else
+      #         echo "FAILED -  Tag is not created from master branch"
+      #         exit 1
+      #     fi
+      # a2ba47e69deaf8a8e63fbd1013bc4debd41dfbdc (tag: v0.1.32)
