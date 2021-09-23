@@ -29,7 +29,7 @@ jobs:
       - name: Check if tag is created from master
         run: |
           tagSHA=$(git rev-parse ${GITHUB_REF##*/})
-          if [ $(git branch --no-abbrev --no-color --contains $tagSHA); then
+          if $(git branch --no-abbrev --no-color --contains $tagSHA); then
               echo "Tag is not created from master branch"
               exit 1
           else
