@@ -28,7 +28,6 @@ require (
 	github.com/jcmturner/gokrb5/v8 v8.4.2-0.20201112171129-78f56934d598
 	github.com/lib/pq v1.10.2
 	github.com/mitchellh/go-homedir v1.1.0
-	github.com/mitchellh/gox v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.4.1
 	github.com/nats-io/nats-streaming-server v0.22.1 // indirect
 	github.com/nats-io/nats.go v1.11.1-0.20210623165838-4b75fc59ae30
@@ -39,19 +38,19 @@ require (
 	github.com/rakyll/statik v0.1.7
 	github.com/segmentio/kafka-go v0.3.5
 	github.com/sirupsen/logrus v1.8.1
-	github.com/spf13/cobra v0.0.7
+	github.com/spf13/cobra v1.2.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.8.1
 	github.com/stretchr/testify v1.7.0
 	github.com/weaveworks/promrus v1.2.0
 	github.com/yuin/gopher-lua v0.0.0-20190514113301-1cd887cd7036 // indirect
-	golang.org/x/oauth2 v0.0.0-20210402161424-2e8d93401602
-	google.golang.org/genproto v0.0.0-20210602131652-f16073e35f0c
+	golang.org/x/oauth2 v0.0.0-20210819190943-2bc19b11175f
+	google.golang.org/genproto v0.0.0-20210831024726-fe130286e0e2
 	google.golang.org/grpc v1.40.0
 	gopkg.in/square/go-jose.v2 v2.4.1 // indirect
-	k8s.io/api v0.20.5
-	k8s.io/apimachinery v0.20.5
-	k8s.io/client-go v0.20.5
-	k8s.io/component-base v0.20.5
+	k8s.io/api v0.23.0
+	k8s.io/apimachinery v0.23.0
+	k8s.io/client-go v0.23.0
+	k8s.io/component-base v0.23.0
 	k8s.io/kubelet v0.20.5
 )
