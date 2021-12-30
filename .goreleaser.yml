@@ -104,22 +104,22 @@ brews:
     # https://goreleaser.com/customization/homebrew/
     # https://docs.brew.sh/How-to-Create-and-Maintain-a-Tap
   - tap:
-      owner: ljubon
+      owner: G-Research
       name: homebrew-armadactl
       token: "{{ .Env.GITHUB_PAT }}"
     name: armadactl
     ids:
     - "armadactl-homebrew"
     folder: Formula
-    homepage: "https://github.com/ljubon/homebrew-armadactl"
+    homepage: "https://github.com/G-Research/homebrew-armadactl"
     description: "Example binary distribution using homebrew"
     test: |
       system "#{bin}/armadactl help"
     install: |
       bin.install "armadactl"
     commit_author:
-      name: Ljubo Nikolic
-      email: ljubonikolic@gmail.com
+      name: Ljubo Nikolic # should this be updated as well?
+      email: ljubonikolic@gmail.com # should this be updated as well?
 nfpms:
   - id: "armadactl"
     package_name: armadactl
@@ -149,14 +149,14 @@ changelog:
 dockers: 
   # https://goreleaser.com/customization/docker/
   - image_templates: 
-    - "ljubon/armada:{{ .Version }}"
-    - "ljubon/armada:latest"
+    - "G-Research/armada:{{ .Version }}"
+    - "G-Research/armada:latest"
     dockerfile: ./build/armada/Dockerfile
     build_flag_templates:
     - --label=org.opencontainers.image.title={{ .ProjectName }}
     - --label=org.opencontainers.image.description={{ .ProjectName }}
-    - --label=org.opencontainers.image.url=https://github.com/ljubon/armada
-    - --label=org.opencontainers.image.source=https://github.com/ljubon/armada
+    - --label=org.opencontainers.image.url=https://github.com/G-Research/armada
+    - --label=org.opencontainers.image.source=https://github.com/G-Research/armada
     - --label=org.opencontainers.image.version={{ .Version }}
     - --label=org.opencontainers.image.revision={{ .FullCommit }}
     use_buildx: true
@@ -164,14 +164,14 @@ dockers:
       - ./config/armada/config.yaml
       - ./bin/linux/server
   - image_templates: 
-    - "ljubon/armada-executor:{{ .Version }}"
-    - "ljubon/armada-executor:latest"
+    - "G-Research/armada-executor:{{ .Version }}"
+    - "G-Research/armada-executor:latest"
     dockerfile: ./build/executor/Dockerfile
     build_flag_templates:
     - --label=org.opencontainers.image.title={{ .ProjectName }}
     - --label=org.opencontainers.image.description={{ .ProjectName }}
-    - --label=org.opencontainers.image.url=https://github.com/ljubon/armada
-    - --label=org.opencontainers.image.source=https://github.com/ljubon/armada
+    - --label=org.opencontainers.image.url=https://github.com/G-Research/armada
+    - --label=org.opencontainers.image.source=https://github.com/G-Research/armada
     - --label=org.opencontainers.image.version={{ .Version }}
     - --label=org.opencontainers.image.revision={{ .FullCommit }}
     use_buildx: true
@@ -179,42 +179,42 @@ dockers:
       - ./config/executor/config.yaml
       - ./bin/linux/executor
   - image_templates: 
-    - "ljubon/armada-load-tester:{{ .Version }}"
-    - "ljubon/armada-load-tester:latest"
+    - "G-Research/armada-load-tester:{{ .Version }}"
+    - "G-Research/armada-load-tester:latest"
     dockerfile: ./build/armada-load-tester/Dockerfile
     build_flag_templates:
     - --label=org.opencontainers.image.title={{ .ProjectName }}
     - --label=org.opencontainers.image.description={{ .ProjectName }}
-    - --label=org.opencontainers.image.url=https://github.com/ljubon/armada
-    - --label=org.opencontainers.image.source=https://github.com/ljubon/armada
+    - --label=org.opencontainers.image.url=https://github.com/G-Research/armada
+    - --label=org.opencontainers.image.source=https://github.com/G-Research/armada
     - --label=org.opencontainers.image.version={{ .Version }}
     - --label=org.opencontainers.image.revision={{ .FullCommit }}
     use_buildx: true
     extra_files:
       - ./bin/linux/armada-load-tester
   - image_templates: 
-    - "ljubon/armadactl:{{ .Version }}"
-    - "ljubon/armadactl:latest"
+    - "G-Research/armadactl:{{ .Version }}"
+    - "G-Research/armadactl:latest"
     dockerfile: ./build/armadactl/Dockerfile
     build_flag_templates:
     - --label=org.opencontainers.image.title={{ .ProjectName }}
     - --label=org.opencontainers.image.description={{ .ProjectName }}
-    - --label=org.opencontainers.image.url=https://github.com/ljubon/armada
-    - --label=org.opencontainers.image.source=https://github.com/ljubon/armada
+    - --label=org.opencontainers.image.url=https://github.com/G-Research/armada
+    - --label=org.opencontainers.image.source=https://github.com/G-Research/armada
     - --label=org.opencontainers.image.version={{ .Version }}
     - --label=org.opencontainers.image.revision={{ .FullCommit }}
     use_buildx: true
     extra_files:
       - ./bin/linux/armadactl
   - image_templates: 
-    - "ljubon/armada-fakeexecutor:{{ .Version }}"
-    - "ljubon/armada-fakeexecutor:latest"
+    - "G-Research/armada-fakeexecutor:{{ .Version }}"
+    - "G-Research/armada-fakeexecutor:latest"
     dockerfile: ./build/fakeexecutor/Dockerfile
     build_flag_templates:
     - --label=org.opencontainers.image.title={{ .ProjectName }}
     - --label=org.opencontainers.image.description={{ .ProjectName }}
-    - --label=org.opencontainers.image.url=https://github.com/ljubon/armada
-    - --label=org.opencontainers.image.source=https://github.com/ljubon/armada
+    - --label=org.opencontainers.image.url=https://github.com/G-Research/armada
+    - --label=org.opencontainers.image.source=https://github.com/G-Research/armada
     - --label=org.opencontainers.image.version={{ .Version }}
     - --label=org.opencontainers.image.revision={{ .FullCommit }}
     use_buildx: true
@@ -222,14 +222,14 @@ dockers:
       - ./bin/linux/fakeexecutor
       - ./config/executor/config.yaml
   - image_templates: 
-    - "ljubon/armada-lookout:{{ .Version }}"
-    - "ljubon/armada-lookout:latest"
+    - "G-Research/armada-lookout:{{ .Version }}"
+    - "G-Research/armada-lookout:latest"
     dockerfile: ./build/lookout/Dockerfile
     build_flag_templates:
     - --label=org.opencontainers.image.title={{ .ProjectName }}
     - --label=org.opencontainers.image.description={{ .ProjectName }}
-    - --label=org.opencontainers.image.url=https://github.com/ljubon/armada
-    - --label=org.opencontainers.image.source=https://github.com/ljubon/armada
+    - --label=org.opencontainers.image.url=https://github.com/G-Research/armada
+    - --label=org.opencontainers.image.source=https://github.com/G-Research/armada
     - --label=org.opencontainers.image.version={{ .Version }}
     - --label=org.opencontainers.image.revision={{ .FullCommit }}
     use_buildx: true

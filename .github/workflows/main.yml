@@ -168,21 +168,21 @@ jobs:
 
           echo ${dockerToken} | docker login -u ${dockerUsername} --password-stdin
 
-          docker tag armada ljubon/armada-server-dev:${TAG}
-          docker push ljubon/armada-server-dev:${TAG}
+          docker tag armada G-Research/armada-server-dev:${TAG}
+          docker push G-Research/armada-server-dev:${TAG}
 
-          docker tag armada-executor ljubon/armada-executor-dev:${TAG}
-          docker push ljubon/armada-executor-dev:${TAG}
+          docker tag armada-executor G-Research/armada-executor-dev:${TAG}
+          docker push G-Research/armada-executor-dev:${TAG}
 
-          docker tag armadactl ljubon/armada-armadactl-dev:${TAG}
-          docker push ljubon/armada-armadactl-dev:${TAG}
+          docker tag armadactl G-Research/armada-armadactl-dev:${TAG}
+          docker push G-Research/armada-armadactl-dev:${TAG}
 
-          docker tag armada-load-tester ljubon/armada-load-tester-dev:${TAG}
-          docker push ljubon/armada-load-tester-dev:${TAG}
+          docker tag armada-load-tester G-Research/armada-load-tester-dev:${TAG}
+          docker push G-Research/armada-load-tester-dev:${TAG}
 
-          docker tag armada-fakeexecutor ljubon/armada-fakeexecutor-dev:${TAG}
-          docker push ljubon/armada-fakeexecutor-dev:${TAG}
+          docker tag armada-fakeexecutor G-Research/armada-fakeexecutor-dev:${TAG}
+          docker push G-Research/armada-fakeexecutor-dev:${TAG}
 
-          docker tag armada-lookout ljubon/armada-lookout-dev:${TAG}
-          docker push ljubon/armada-lookout-dev:${TAG}
+          docker tag armada-lookout G-Research/armada-lookout-dev:${TAG}
+          docker push G-Research/armada-lookout-dev:${TAG}
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada

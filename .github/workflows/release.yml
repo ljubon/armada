@@ -59,7 +59,7 @@ jobs:
           workdir: ${{ env.GOPATH }}/src/github.com/G-Research/armada
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_PAT: ${{ secrets.PAT_LJUBOOPS }}
+          GITHUB_PAT: ${{ secrets.PAT }}
 
       - name: Clear
         if: always()
@@ -77,11 +77,11 @@ jobs:
       - uses: actions/setup-dotnet@v1
         with:
           dotnet-version: '3.0.101' 
-          source-url: "https://nuget.pkg.github.com/ljubon/index.json"
+          source-url: "https://nuget.pkg.github.com/G-Research/index.json"
         env:
-          NUGET_AUTH_TOKEN: ${{ secrets.PAT_LJUBOOPS }}
+          NUGET_AUTH_TOKEN: ${{ secrets.PAT }}
 
-      - name: Release dotnet client #TODO change RepositoryUrl in *.csproj, replace PAT_LJUBOOPS
+      - name: Release dotnet client
         run: |
           RELEASE_TAG_RAW=${GITHUB_REF##*/}
           RELEASE_TAG=${RELEASE_TAG_RAW:1}
@@ -90,7 +90,7 @@ jobs:
           ls -larth
           cat /home/runner/work/armada/nuget.config
           dotnet pack client/DotNet/Armada.Client/Armada.Client.csproj -c Release -p:PackageVersion=${RELEASE_TAG} -o ./bin/client/DotNet
-          dotnet nuget push ./bin/client/DotNet/G-Research.Armada.Client.${RELEASE_TAG}.nupkg --api-key ${{ secrets.PAT_LJUBOOPS }}
+          dotnet nuget push ./bin/client/DotNet/G-Research.Armada.Client.${RELEASE_TAG}.nupkg --api-key ${{ secrets.PAT }}
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
       - name: Archive production artifacts
@@ -126,11 +126,11 @@ jobs:
           ACCESS_TOKEN=$(curl -s -X POST -H "Accept: application/vnd.github.v3+json" -H "Authorization:Bearer $APP_TOKEN" https://api.github.com/app/installations/$INSTALLATION_ID/access_tokens | jq -r '.token')
           echo "::set-output name=token::$ACCESS_TOKEN"
 
-      - name: Trigger remote workflow #TODO Change TOKEN, REPO, REF, project
+      - name: Trigger remote workflow #TODO Change TOKEN, REPO, REF, project. There is no workflow in the G-Research/charts repo
         env: 
           GITHUB_TOKEN: ${{ steps.token.outputs.token }}
-          REPO: ljubon/charts
+          REPO: G-Research/charts
           REF: test-dispatcher
           WORKFLOW: gh-pages.yml
         run: |
-          gh workflow run $WORKFLOW --repo $REPO --ref $REF --field project="ljubon/armada" --field ref="${GITHUB_REF##*/}"
+          gh workflow run $WORKFLOW --repo $REPO --ref $REF --field project="G-Research/armada" --field ref="${GITHUB_REF##*/}"
