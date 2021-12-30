@@ -1,9 +1,5 @@
 name: CI
 
-defaults:
-  run:
-    shell: bash
-
 env:
   GO111MODULE: "on"
   GOPATH: "/home/runner/work/armada/armada/go"
