@@ -15,8 +15,8 @@ jobs:
     name: Release
     runs-on: ubuntu-20.04
     env:
-      DOCKERHUB_PASS: ${{ secrets.DOCKERHUB_PASS }}
-      DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+      DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
+      DOCKERHUB_USER: ${{ secrets.DOCKERUSERNAME }}
     steps:
       - name: Checkout code into the Go module directory
         uses: actions/checkout@v2
@@ -40,10 +40,10 @@ jobs:
         uses: ncipollo/release-action@v1.8.6
         with:
           artifacts: "${{ env.GOPATH }}/src/github.com/G-Research/armada/dist/*"
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.RELEASE_TOKEN }}
           tag: ${{ github.event.release.tag_name }} 
 
-      - name: Push Release Image
+      - name: Push Release Image #T0-RENAME
         run: |
           if [ -z "${DOCKERHUB_USER}" ]
             then
@@ -56,26 +56,25 @@ jobs:
 
           echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
 
+          docker pull ljubon/armada-server-dev:${TAG}
+          docker tag ljubon/armada-server-dev:${TAG} ljubon/armada-server:${RELEASE_TAG}
+          docker push ljubon/armada-server:${RELEASE_TAG}
 
-          docker pull gresearchdev/armada-server-dev:${TAG}
-          docker tag gresearchdev/armada-server-dev:${TAG} gresearchdev/armada-server:${RELEASE_TAG}
-          docker push gresearchdev/armada-server:${RELEASE_TAG}
+          docker pull ljubon/armada-executor-dev:${TAG}
+          docker tag ljubon/armada-executor-dev:${TAG} ljubon/armada-executor:${RELEASE_TAG}
+          docker push ljubon/armada-executor:${RELEASE_TAG}
 
-          docker pull gresearchdev/armada-executor-dev:${TAG}
-          docker tag gresearchdev/armada-executor-dev:${TAG} gresearchdev/armada-executor:${RELEASE_TAG}
-          docker push gresearchdev/armada-executor:${RELEASE_TAG}
+          docker pull ljubon/armada-armadactl-dev:${TAG}
+          docker tag ljubon/armada-armadactl-dev:${TAG} ljubon/armada-armadactl:${RELEASE_TAG}
+          docker push ljubon/armada-armadactl:${RELEASE_TAG}
 
-          docker pull gresearchdev/armada-armadactl-dev:${TAG}
-          docker tag gresearchdev/armada-armadactl-dev:${TAG} gresearchdev/armada-armadactl:${RELEASE_TAG}
-          docker push gresearchdev/armada-armadactl:${RELEASE_TAG}
+          docker pull ljubon/armada-lookout-dev:${TAG}
+          docker tag ljubon/armada-lookout-dev:${TAG} ljubon/armada-lookout:${RELEASE_TAG}
+          docker push ljubon/armada-lookout:${RELEASE_TAG}
 
-          docker pull gresearchdev/armada-lookout-dev:${TAG}
-          docker tag gresearchdev/armada-lookout-dev:${TAG} gresearchdev/armada-lookout:${RELEASE_TAG}
-          docker push gresearchdev/armada-lookout:${RELEASE_TAG}
-
-          docker pull gresearchdev/armada-binoculars-dev:${TAG}
-          docker tag gresearchdev/armada-binoculars-dev:${TAG} gresearchdev/armada-binoculars:${RELEASE_TAG}
-          docker push gresearchdev/armada-binoculars:${RELEASE_TAG}
+          docker pull ljubon/armada-binoculars-dev:${TAG}
+          docker tag ljubon/armada-binoculars-dev:${TAG} ljubon/armada-binoculars:${RELEASE_TAG}
+          docker push ljubon/armada-binoculars:${RELEASE_TAG}
 
           rm -v /home/runner/.docker/config.json
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
@@ -88,17 +87,17 @@ jobs:
       - name: Checkout Armada
         uses: actions/checkout@v2
         with:
+          repository: ljubon/armada #T0-RENAME
           path: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
-      - name: Clone chart repo, update version and image tag to match current $RELEASE_TAG
+      - name: Update version, appVersion and image tag to match current $RELEASE_TAG #T0-RENAME
         run: |
           mkdir -p ${{ env.GOPATH }}/src/github.com/G-Research/charts
-          mkdir -p $HOME/.ssh && echo "dummy" > $HOME/.ssh/known_hosts
-          
-          echo "github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==" > $HOME/.ssh/known_hosts
+          mkdir -p $HOME/.ssh && echo "test" > $HOME/.ssh/known_hosts
+          echo "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDqvzAKi2JmyuqM3STjgKbK3nTJAc9aSPwqtjVqEql3ytITmyYGoUjnyRL+64loTDK2lifkfi2ypDXFLefWp3OVW/hedDd2/AaW1F4PbUzje/7xF7jnHlRyNPrirDdXy9+MqLACQ+8ulqH8tBnKr5zEow6Gu4uqHbP6RYOQv+etDZ528VNSlamz93FtLKCaN5wNFAIvpBPiJTsHEhs2FqsYUrIzN/6izjlM1ZQAhy6ooE6CM0ltcZN2uN2SsSegD90fwQKans+oFtOQyyPd6ByA5wt3pEDBp69KcTFthcBDhiT8BwvpqjcH5TruBhMq8WN0At1A0AljsozwzUgJM5tN ljubo.nikolic" > $HOME/.ssh/known_hosts
           eval "$(ssh-agent -s)"
-          echo -e "${{ secrets.ARMADA_CHART_UPDATE_KEY }}" | ssh-add - > /dev/null
-          git clone -q git@github.com:G-Research/charts.git charts/
+          echo -e "${{ secrets.LJUBON_ARMADA_CHART_UPDATE_KEY }}" | ssh-add - > /dev/null
+          git clone -q git@github.com:ljubon/charts.git charts/
           cd charts/
           git remote -v
 
@@ -115,15 +114,14 @@ jobs:
           helm repo index .
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research
 
-      - name: Commit and push updated charts
+      - name: Commit and push updated charts #T0-RENAME
         run: |
           RELEASE_TAG=${GITHUB_REF##*/}
-          cd charts
           git checkout -b github-armada_$RELEASE_TAG
           git add ./armada index.yaml
-          git -c user.name='GR OSS' -c user.email=github@gr-oss.io commit -qam "Pushing new helm charts at version $RELEASE_TAG"
+          git -c user.name='Ljubo Nikolic' -c user.email="ljubonikolic@gmail.com" commit -qam "Pushing new helm charts at version $RELEASE_TAG"
           eval "$(ssh-agent -s)"
-          echo -e "${{ secrets.ARMADA_CHART_UPDATE_KEY }}" | ssh-add - > /dev/null
+          echo -e "${{ secrets.LJUBON_ARMADA_CHART_UPDATE_KEY }}" | ssh-add - 
           git push -q origin HEAD
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/charts
 
@@ -136,12 +134,12 @@ jobs:
         with:
           path: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
-      - uses: actions/setup-dotnet@v1
+      - uses: actions/setup-dotnet@v1 #T0-RENAME
         with:
           dotnet-version: '3.0.101' 
-          source-url: "https://api.nuget.org/v3/index.json"
+          source-url: "https://nuget.pkg.github.com/ljubon/index.json"
         env:
-          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_API_KEY }}
+          NUGET_AUTH_TOKEN: ${{ secrets.PAT_LJUBOOPS }}
 
       - name: Release dotnet client
         run: |
@@ -151,9 +149,8 @@ jobs:
           echo $RELEASE_TAG
           cat /home/runner/work/armada/nuget.config
           dotnet pack client/DotNet/Armada.Client/Armada.Client.csproj -c Release -p:PackageVersion=${RELEASE_TAG} -o ./bin/client/DotNet
-          dotnet nuget push ./bin/client/DotNet/G-Research.Armada.Client.${RELEASE_TAG}.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
-        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
-
+          dotnet nuget push ./bin/client/DotNet/G-Research.Armada.Client.${RELEASE_TAG}.nupkg --api-key ${{ secrets.PAT_LJUBOOPS }} 
+        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada #T0-RENAME
       - name: Archive production artifacts
         uses: actions/upload-artifact@v2
         with:
