@@ -10,16 +10,11 @@ on:
     tags: 
       - 'v*'
 
-defaults:
-  run:
-    shell: bash
-
 jobs:
   release:
     name: Release
     runs-on: ubuntu-20.04
     env:
-      GO111MODULE: "on"
       DOCKERHUB_PASS: ${{ secrets.DOCKERHUB_PASS }}
       DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
     steps:

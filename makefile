@@ -64,7 +64,7 @@ build-armadactl:
 
 build-armadactl-multiplatform:
 	go install github.com/mitchellh/gox@v1.0.1
-	gox -ldflags="$(ARMADACTL_LDFLAGS)" -output="./bin/{{.OS}}-{{.Arch}}/armadactl" -arch="amd64" -os="windows linux darwin" ./cmd/armadactl/
+	${GOPATH}/bin/gox -ldflags="$(ARMADACTL_LDFLAGS)" -output="./bin/{{.OS}}-{{.Arch}}/armadactl" -arch="amd64" -os="windows linux darwin" ./cmd/armadactl/
 
 build-armadactl-release: build-armadactl-multiplatform
 	mkdir ./dist || true
