@@ -149,8 +149,8 @@ changelog:
 dockers: 
   # https://goreleaser.com/customization/docker/
   - image_templates: 
-    - "G-Research/armada:{{ .Version }}"
-    - "G-Research/armada:latest"
+    - "gresearchdev/armada:{{ .Version }}"
+    - "gresearchdev/armada:latest"
     dockerfile: ./build/armada/Dockerfile
     build_flag_templates:
     - --label=org.opencontainers.image.title={{ .ProjectName }}
@@ -164,8 +164,8 @@ dockers:
       - ./config/armada/config.yaml
       - ./bin/linux/server
   - image_templates: 
-    - "G-Research/armada-executor:{{ .Version }}"
-    - "G-Research/armada-executor:latest"
+    - "gresearchdev/armada-executor:{{ .Version }}"
+    - "gresearchdev/armada-executor:latest"
     dockerfile: ./build/executor/Dockerfile
     build_flag_templates:
     - --label=org.opencontainers.image.title={{ .ProjectName }}
@@ -179,8 +179,8 @@ dockers:
       - ./config/executor/config.yaml
       - ./bin/linux/executor
   - image_templates: 
-    - "G-Research/armada-load-tester:{{ .Version }}"
-    - "G-Research/armada-load-tester:latest"
+    - "gresearchdev/armada-load-tester:{{ .Version }}"
+    - "gresearchdev/armada-load-tester:latest"
     dockerfile: ./build/armada-load-tester/Dockerfile
     build_flag_templates:
     - --label=org.opencontainers.image.title={{ .ProjectName }}
@@ -193,8 +193,8 @@ dockers:
     extra_files:
       - ./bin/linux/armada-load-tester
   - image_templates: 
-    - "G-Research/armadactl:{{ .Version }}"
-    - "G-Research/armadactl:latest"
+    - "gresearchdev/armadactl:{{ .Version }}"
+    - "gresearchdev/armadactl:latest"
     dockerfile: ./build/armadactl/Dockerfile
     build_flag_templates:
     - --label=org.opencontainers.image.title={{ .ProjectName }}
@@ -207,8 +207,8 @@ dockers:
     extra_files:
       - ./bin/linux/armadactl
   - image_templates: 
-    - "G-Research/armada-fakeexecutor:{{ .Version }}"
-    - "G-Research/armada-fakeexecutor:latest"
+    - "gresearchdev/armada-fakeexecutor:{{ .Version }}"
+    - "gresearchdev/armada-fakeexecutor:latest"
     dockerfile: ./build/fakeexecutor/Dockerfile
     build_flag_templates:
     - --label=org.opencontainers.image.title={{ .ProjectName }}
@@ -222,8 +222,8 @@ dockers:
       - ./bin/linux/fakeexecutor
       - ./config/executor/config.yaml
   - image_templates: 
-    - "G-Research/armada-lookout:{{ .Version }}"
-    - "G-Research/armada-lookout:latest"
+    - "gresearchdev/armada-lookout:{{ .Version }}"
+    - "gresearchdev/armada-lookout:latest"
     dockerfile: ./build/lookout/Dockerfile
     build_flag_templates:
     - --label=org.opencontainers.image.title={{ .ProjectName }}

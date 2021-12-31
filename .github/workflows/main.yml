@@ -102,9 +102,9 @@ jobs:
     name: Build
     needs: [test] 
     runs-on: ubuntu-20.04
-    env: #TODO change DOCKERTOKEN and DOCKERUSERNAME
+    env:
       dockerToken: ${{ secrets.DOCKERTOKEN }}
-      dockerUsername: ${{ secrets.DOCKERUSERNAME }}
+      dockerUsername: ${{ secrets.DOCKERHUB_USER }}
     steps:
       - name: Install Go
         uses: actions/setup-go@v2
@@ -149,7 +149,7 @@ jobs:
           path: |
             ${{ env.GOPATH }}/src/github.com/G-Research/armada/bin/armadactl
 
-      - name: Push Image #TODO
+      - name: Push Image
         run: |
           if [ -z "${dockerUsername}" ]
             then
@@ -168,21 +168,21 @@ jobs:
 
           echo ${dockerToken} | docker login -u ${dockerUsername} --password-stdin
 
-          docker tag armada G-Research/armada-server-dev:${TAG}
-          docker push G-Research/armada-server-dev:${TAG}
+          docker tag armada gresearchdev/armada-server-dev:${TAG}
+          docker push gresearchdev/armada-server-dev:${TAG}
 
-          docker tag armada-executor G-Research/armada-executor-dev:${TAG}
-          docker push G-Research/armada-executor-dev:${TAG}
+          docker tag armada-executor gresearchdev/armada-executor-dev:${TAG}
+          docker push gresearchdev/armada-executor-dev:${TAG}
 
-          docker tag armadactl G-Research/armada-armadactl-dev:${TAG}
-          docker push G-Research/armada-armadactl-dev:${TAG}
+          docker tag armadactl gresearchdev/armada-armadactl-dev:${TAG}
+          docker push gresearchdev/armada-armadactl-dev:${TAG}
 
-          docker tag armada-load-tester G-Research/armada-load-tester-dev:${TAG}
-          docker push G-Research/armada-load-tester-dev:${TAG}
+          docker tag armada-load-tester gresearchdev/armada-load-tester-dev:${TAG}
+          docker push gresearchdev/armada-load-tester-dev:${TAG}
 
-          docker tag armada-fakeexecutor G-Research/armada-fakeexecutor-dev:${TAG}
-          docker push G-Research/armada-fakeexecutor-dev:${TAG}
+          docker tag armada-fakeexecutor gresearchdev/armada-fakeexecutor-dev:${TAG}
+          docker push gresearchdev/armada-fakeexecutor-dev:${TAG}
 
-          docker tag armada-lookout G-Research/armada-lookout-dev:${TAG}
-          docker push G-Research/armada-lookout-dev:${TAG}
+          docker tag armada-lookout gresearchdev/armada-lookout-dev:${TAG}
+          docker push gresearchdev/armada-lookout-dev:${TAG}
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
