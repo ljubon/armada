@@ -46,6 +46,7 @@ jobs:
               exit 1
             fi
           if [ $(goimports -d -local "github.com/G-Research/armada" . | wc -l) -eq 0 ]; then exit 0; else exit 1; fi
+        working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
       - name: Run ineffassign
         run: |
