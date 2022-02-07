@@ -108,7 +108,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
-      DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+      DOCKERHUB_USER: ${{ secrets.DOCKERUSERNAME }}
     steps:
       - name: Install Go
         uses: actions/setup-go@v2
