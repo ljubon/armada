@@ -63,25 +63,25 @@ jobs:
           echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
 
 
-          docker pull gresearchdev/armada-server-dev:${TAG}
-          docker tag gresearchdev/armada-server-dev:${TAG} gresearchdev/armada-server:${RELEASE_TAG}
-          docker push gresearchdev/armada-server:${RELEASE_TAG}
+          docker pull ljubon/armada-server-dev:${TAG}
+          docker tag ljubon/armada-server-dev:${TAG} ljubon/armada-server:${RELEASE_TAG}
+          docker push ljubon/armada-server:${RELEASE_TAG}
 
-          docker pull gresearchdev/armada-executor-dev:${TAG}
-          docker tag gresearchdev/armada-executor-dev:${TAG} gresearchdev/armada-executor:${RELEASE_TAG}
-          docker push gresearchdev/armada-executor:${RELEASE_TAG}
+          docker pull ljubon/armada-executor-dev:${TAG}
+          docker tag ljubon/armada-executor-dev:${TAG} ljubon/armada-executor:${RELEASE_TAG}
+          docker push ljubon/armada-executor:${RELEASE_TAG}
 
-          docker pull gresearchdev/armada-armadactl-dev:${TAG}
-          docker tag gresearchdev/armada-armadactl-dev:${TAG} gresearchdev/armada-armadactl:${RELEASE_TAG}
-          docker push gresearchdev/armada-armadactl:${RELEASE_TAG}
+          docker pull ljubon/armada-armadactl-dev:${TAG}
+          docker tag ljubon/armada-armadactl-dev:${TAG} ljubon/armada-armadactl:${RELEASE_TAG}
+          docker push ljubon/armada-armadactl:${RELEASE_TAG}
 
-          docker pull gresearchdev/armada-lookout-dev:${TAG}
-          docker tag gresearchdev/armada-lookout-dev:${TAG} gresearchdev/armada-lookout:${RELEASE_TAG}
-          docker push gresearchdev/armada-lookout:${RELEASE_TAG}
+          docker pull ljubon/armada-lookout-dev:${TAG}
+          docker tag ljubon/armada-lookout-dev:${TAG} ljubon/armada-lookout:${RELEASE_TAG}
+          docker push ljubon/armada-lookout:${RELEASE_TAG}
 
-          docker pull gresearchdev/armada-binoculars-dev:${TAG}
-          docker tag gresearchdev/armada-binoculars-dev:${TAG} gresearchdev/armada-binoculars:${RELEASE_TAG}
-          docker push gresearchdev/armada-binoculars:${RELEASE_TAG}
+          docker pull ljubon/armada-binoculars-dev:${TAG}
+          docker tag ljubon/armada-binoculars-dev:${TAG} ljubon/armada-binoculars:${RELEASE_TAG}
+          docker push ljubon/armada-binoculars:${RELEASE_TAG}
 
           rm -v /home/runner/.docker/config.json
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
