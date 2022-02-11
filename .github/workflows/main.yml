@@ -168,26 +168,26 @@ jobs:
 
           echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
 
-          docker tag armada gresearchdev/armada-server-dev:${TAG}
-          docker push gresearchdev/armada-server-dev:${TAG}
+          docker tag armada ljubon/armada-server-dev:${TAG}
+          docker push ljubon/armada-server-dev:${TAG}
 
-          docker tag armada-executor gresearchdev/armada-executor-dev:${TAG}
-          docker push gresearchdev/armada-executor-dev:${TAG}
+          docker tag armada-executor ljubon/armada-executor-dev:${TAG}
+          docker push ljubon/armada-executor-dev:${TAG}
 
-          docker tag armadactl gresearchdev/armada-armadactl-dev:${TAG}
-          docker push gresearchdev/armada-armadactl-dev:${TAG}
+          docker tag armadactl ljubon/armada-armadactl-dev:${TAG}
+          docker push ljubon/armada-armadactl-dev:${TAG}
 
-          docker tag armada-load-tester gresearchdev/armada-load-tester-dev:${TAG}
-          docker push gresearchdev/armada-load-tester-dev:${TAG}
+          docker tag armada-load-tester ljubon/armada-load-tester-dev:${TAG}
+          docker push ljubon/armada-load-tester-dev:${TAG}
 
-          docker tag armada-fakeexecutor gresearchdev/armada-fakeexecutor-dev:${TAG}
-          docker push gresearchdev/armada-fakeexecutor-dev:${TAG}
+          docker tag armada-fakeexecutor ljubon/armada-fakeexecutor-dev:${TAG}
+          docker push ljubon/armada-fakeexecutor-dev:${TAG}
 
-          docker tag armada-lookout gresearchdev/armada-lookout-dev:${TAG}
-          docker push gresearchdev/armada-lookout-dev:${TAG}
+          docker tag armada-lookout ljubon/armada-lookout-dev:${TAG}
+          docker push ljubon/armada-lookout-dev:${TAG}
           
-          docker tag armada-binoculars gresearchdev/armada-binoculars-dev:${TAG}
-          docker push gresearchdev/armada-binoculars-dev:${TAG}
+          docker tag armada-binoculars ljubon/armada-binoculars-dev:${TAG}
+          docker push ljubon/armada-binoculars-dev:${TAG}
 
           rm -v /home/runner/.docker/config.json
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
