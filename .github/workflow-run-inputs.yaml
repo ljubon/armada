@@ -1,0 +1,4 @@
+include:
+  - chart: armada
+    src_path: deployment/armada//
+    dst_path: armada/
