@@ -108,15 +108,22 @@ jobs:
     needs: [test] 
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 1
-      fail-fast: true
       matrix:
         include:
-        - devImage: "gresearchdev/armada-server-dev"
-        - devImage: "gresearchdev/armada-executor-dev"
-        - devImage: "gresearchdev/armada-armadactl-dev"
-        - devImage: "gresearchdev/armada-lookout-dev"
-        - devImage: "gresearchdev/armada-binoculars-dev"
+        - localTag: armada
+          devImage: "gresearchdev/armada-server-dev"
+        - localTag: armada-executor
+          devImage: "gresearchdev/armada-executor-dev"
+        - localTag: "armadactl"
+          devImage: "gresearchdev/armada-armadactl-dev"
+        - localTag: armada-load-tester
+          devImage: "gresearchdev/armada-load-tester-dev"
+        - localTag: armada-fakeexecutor
+          devImage: "gresearchdev/armada-fakeexecutor-dev"
+        - localTag: armada-lookout
+          devImage: "gresearchdev/armada-lookout-dev"
+        - localTag: armada-binoculars
+          devImage: "gresearchdev/armada-binoculars-dev"
 
     env:
       DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
@@ -179,26 +186,8 @@ jobs:
 
           echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
 
-          docker tag armada gresearchdev/armada-server-dev:${TAG}
-          docker push gresearchdev/armada-server-dev:${TAG}
-
-          docker tag armada-executor gresearchdev/armada-executor-dev:${TAG}
-          docker push gresearchdev/armada-executor-dev:${TAG}
-
-          docker tag armadactl gresearchdev/armada-armadactl-dev:${TAG}
-          docker push gresearchdev/armada-armadactl-dev:${TAG}
-
-          docker tag armada-load-tester gresearchdev/armada-load-tester-dev:${TAG}
-          docker push gresearchdev/armada-load-tester-dev:${TAG}
-
-          docker tag armada-fakeexecutor gresearchdev/armada-fakeexecutor-dev:${TAG}
-          docker push gresearchdev/armada-fakeexecutor-dev:${TAG}
-
-          docker tag armada-lookout gresearchdev/armada-lookout-dev:${TAG}
-          docker push gresearchdev/armada-lookout-dev:${TAG}
-          
-          docker tag armada-binoculars gresearchdev/armada-binoculars-dev:${TAG}
-          docker push gresearchdev/armada-binoculars-dev:${TAG}
+          docker tag ${{ matrix.localtag }} ${{ matrix.devImage }}:${TAG}
+          docker push ${{ matrix.devImage }}:${TAG}
 
           rm -v /home/runner/.docker/config.json
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
