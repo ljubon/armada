@@ -20,16 +20,16 @@ jobs:
       fail-fast: true
       matrix:
         include:
-        - devImage: "gresearchdev/armada-server-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-server:${GITHUB_REF##*/}"
-        - devImage: "gresearchdev/armada-executor-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-executor:${GITHUB_REF##*/}"
-        - devImage: "gresearchdev/armada-armadactl-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-armadactl:${GITHUB_REF##*/}"
-        - devImage: "gresearchdev/armada-lookout-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-lookout:${GITHUB_REF##*/}"
-        - devImage: "gresearchdev/armada-binoculars-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-binoculars:${GITHUB_REF##*/}"
+        - devImage: "ljubon/armada-server-dev:${GITHUB_SHA}"
+          releaseImage: "ljubon/armada-server:${GITHUB_REF##*/}"
+        - devImage: "ljubon/armada-executor-dev:${GITHUB_SHA}"
+          releaseImage: "ljubon/armada-executor:${GITHUB_REF##*/}"
+        - devImage: "ljubon/armada-armadactl-dev:${GITHUB_SHA}"
+          releaseImage: "ljubon/armada-armadactl:${GITHUB_REF##*/}"
+        - devImage: "ljubon/armada-lookout-dev:${GITHUB_SHA}"
+          releaseImage: "ljubon/armada-lookout:${GITHUB_REF##*/}"
+        - devImage: "ljubon/armada-binoculars-dev:${GITHUB_SHA}"
+          releaseImage: "ljubon/armada-binoculars:${GITHUB_REF##*/}"
 
     steps:
       - name: Checkout code into the Go module directory
@@ -61,7 +61,7 @@ jobs:
           tag: ${{ github.event.release.tag_name }} 
 
       - name: Push Release Image
-        if: ${{ !github.event.repository.fork && env.DOCKERHUB_USER != "" }}
+        if: ${{ !github.event.repository.fork }}
         env:
           DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
