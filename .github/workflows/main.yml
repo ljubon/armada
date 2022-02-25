@@ -111,23 +111,19 @@ jobs:
       matrix:
         include:
         - localTag: armada
-          devImage: "gresearchdev/armada-server-dev"
+          devImage: "ljubon/armada-server-dev"
         - localTag: armada-executor
-          devImage: "gresearchdev/armada-executor-dev"
+          devImage: "ljubon/armada-executor-dev"
         - localTag: "armadactl"
-          devImage: "gresearchdev/armada-armadactl-dev"
+          devImage: "ljubon/armada-armadactl-dev"
         - localTag: armada-load-tester
-          devImage: "gresearchdev/armada-load-tester-dev"
+          devImage: "ljubon/armada-load-tester-dev"
         - localTag: armada-fakeexecutor
-          devImage: "gresearchdev/armada-fakeexecutor-dev"
+          devImage: "ljubon/armada-fakeexecutor-dev"
         - localTag: armada-lookout
-          devImage: "gresearchdev/armada-lookout-dev"
+          devImage: "ljubon/armada-lookout-dev"
         - localTag: armada-binoculars
-          devImage: "gresearchdev/armada-binoculars-dev"
-
-    env:
-      DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
-      DOCKERHUB_USER: ${{ secrets.DOCKERUSERNAME }}
+          devImage: "ljubon/armada-binoculars-dev"
     steps:
       - name: Install Go
         uses: actions/setup-go@v2
@@ -169,6 +165,9 @@ jobs:
             ${{ env.GOPATH }}/src/github.com/G-Research/armada/bin/armadactl
 
       - name: Push Dev Image
+        env:
+          DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERUSERNAME }}
         run: | 
           if [ -z "${DOCKERHUB_USER}" ] 
             then

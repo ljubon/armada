@@ -16,20 +16,19 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     strategy:
-      max-parallel: 1
       fail-fast: true
       matrix:
         include:
-        - devImage: "gresearchdev/armada-server-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-server:${GITHUB_REF##*/}"
-        - devImage: "gresearchdev/armada-executor-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-executor:${GITHUB_REF##*/}"
-        - devImage: "gresearchdev/armada-armadactl-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-armadactl:${GITHUB_REF##*/}"
-        - devImage: "gresearchdev/armada-lookout-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-lookout:${GITHUB_REF##*/}"
-        - devImage: "gresearchdev/armada-binoculars-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-binoculars:${GITHUB_REF##*/}"
+        - devImage: "ljubon/armada-server-dev"
+          releaseImage: "ljubon/armada-server"
+        - devImage: "ljubon/armada-executor-dev"
+          releaseImage: "ljubon/armada-executor"
+        - devImage: "ljubon/armada-armadactl-dev"
+          releaseImage: "ljubon/armada-armadactl"
+        - devImage: "ljubon/armada-lookout-dev"
+          releaseImage: "ljubon/armada-lookout"
+        - devImage: "ljubon/armada-binoculars-dev"
+          releaseImage: "ljubon/armada-binoculars"
 
     steps:
       - name: Checkout code into the Go module directory
@@ -61,16 +60,18 @@ jobs:
           tag: ${{ github.event.release.tag_name }} 
 
       - name: Push Release Image
-        if: ${{ !github.event.repository.fork && env.DOCKERHUB_USER != "" }}
+        if: ${{ !github.event.repository.fork }}
         env:
           DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+          RELEASE_TAG: ${GITHUB_REF##*/}
+          TAG: ${GITHUB_SHA}
         run: |
           echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
 
-          docker pull ${{ matrix.devImage }}
-          docker tag ${{ matrix.devImage }} ${{ matrix.releaseImage }}
-          docker push ${{ matrix.releaseImage }}
+          docker pull ${{ matrix.devImage }}:${{ env.TAG }}
+          docker tag ${{ matrix.devImage }}:${{ env.TAG }} ${{ matrix.releaseImage }}:${{ env.RELEASE_TAG }}
+          docker push ${{ matrix.releaseImage }}:${{ env.RELEASE_TAG }}
 
           rm -v /home/runner/.docker/config.json
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
@@ -121,7 +122,7 @@ jobs:
           git add ./armada index.yaml
           git -c user.name='GR OSS' -c user.email=github@gr-oss.io commit -qam "Pushing new helm charts at version $RELEASE_TAG"
           eval "$(ssh-agent -s)"
-          echo -e "${{ secrets.ARMADA_CHART_UPDATE_KEY }}" | ssh-add - > /dev/null
+          echo -e "${{ secrets.LJUBON_ARMADA_CHART_UPDATE_KEY }}" | ssh-add - > /dev/null
           git push -q origin HEAD
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/charts
 
@@ -139,7 +140,7 @@ jobs:
           dotnet-version: '3.0.101' 
           source-url: "https://api.nuget.org/v3/index.json"
         env:
-          NUGET_AUTH_TOKEN: ${{ secrets.NUGET_API_KEY }}
+          NUGET_AUTH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Release dotnet client
         run: |
@@ -149,7 +150,7 @@ jobs:
           echo $RELEASE_TAG
           cat /home/runner/work/armada/nuget.config
           dotnet pack client/DotNet/Armada.Client/Armada.Client.csproj -c Release -p:PackageVersion=${RELEASE_TAG} -o ./bin/client/DotNet
-          dotnet nuget push ./bin/client/DotNet/G-Research.Armada.Client.${RELEASE_TAG}.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json
+          dotnet nuget push ./bin/client/DotNet/G-Research.Armada.Client.${RELEASE_TAG}.nupkg -k ${{ secrets.RELEASE_TOKEN }} -s https://api.nuget.org/v3/index.json
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
       - name: Archive production artifacts
