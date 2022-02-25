@@ -107,6 +107,17 @@ jobs:
     name: Build
     needs: [test] 
     runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 1
+      fail-fast: true
+      matrix:
+        include:
+        - devImage: "gresearchdev/armada-server-dev"
+        - devImage: "gresearchdev/armada-executor-dev"
+        - devImage: "gresearchdev/armada-armadactl-dev"
+        - devImage: "gresearchdev/armada-lookout-dev"
+        - devImage: "gresearchdev/armada-binoculars-dev"
+
     env:
       DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
       DOCKERHUB_USER: ${{ secrets.DOCKERUSERNAME }}

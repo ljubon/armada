@@ -15,9 +15,22 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    env:
-      DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
-      DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+    strategy:
+      max-parallel: 1
+      fail-fast: true
+      matrix:
+        include:
+        - devImage: "gresearchdev/armada-server-dev:${GITHUB_SHA}"
+          releaseImage: "gresearchdev/armada-server:${GITHUB_REF##*/}"
+        - devImage: "gresearchdev/armada-executor-dev:${GITHUB_SHA}"
+          releaseImage: "gresearchdev/armada-executor:${GITHUB_REF##*/}"
+        - devImage: "gresearchdev/armada-armadactl-dev:${GITHUB_SHA}"
+          releaseImage: "gresearchdev/armada-armadactl:${GITHUB_REF##*/}"
+        - devImage: "gresearchdev/armada-lookout-dev:${GITHUB_SHA}"
+          releaseImage: "gresearchdev/armada-lookout:${GITHUB_REF##*/}"
+        - devImage: "gresearchdev/armada-binoculars-dev:${GITHUB_SHA}"
+          releaseImage: "gresearchdev/armada-binoculars:${GITHUB_REF##*/}"
+
     steps:
       - name: Checkout code into the Go module directory
         uses: actions/checkout@v2
@@ -30,9 +43,7 @@ jobs:
           go-version: ${{ env.GOVERSION }}
 
       - name: Build armadactl release artifacts
-        run: |
-          TAG=${GITHUB_REF##*/}
-          make build-armadactl-release RELEASE_VERSION=${TAG}
+        run: make build-armadactl-release RELEASE_VERSION=${GITHUB_REF##*/}
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
       - name: Archive production artifacts
@@ -50,38 +61,16 @@ jobs:
           tag: ${{ github.event.release.tag_name }} 
 
       - name: Push Release Image
+        if: ${{ !github.event.repository.fork && env.DOCKERHUB_USER != "" }}
+        env:
+          DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
         run: |
-          if [ -z "${DOCKERHUB_USER}" ]
-            then
-              echo "Do not push image inside fork."
-              exit 0
-          fi
-
-          TAG=${GITHUB_SHA}
-          RELEASE_TAG=${GITHUB_REF##*/}
-
           echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
 
-
-          docker pull gresearchdev/armada-server-dev:${TAG}
-          docker tag gresearchdev/armada-server-dev:${TAG} gresearchdev/armada-server:${RELEASE_TAG}
-          docker push gresearchdev/armada-server:${RELEASE_TAG}
-
-          docker pull gresearchdev/armada-executor-dev:${TAG}
-          docker tag gresearchdev/armada-executor-dev:${TAG} gresearchdev/armada-executor:${RELEASE_TAG}
-          docker push gresearchdev/armada-executor:${RELEASE_TAG}
-
-          docker pull gresearchdev/armada-armadactl-dev:${TAG}
-          docker tag gresearchdev/armada-armadactl-dev:${TAG} gresearchdev/armada-armadactl:${RELEASE_TAG}
-          docker push gresearchdev/armada-armadactl:${RELEASE_TAG}
-
-          docker pull gresearchdev/armada-lookout-dev:${TAG}
-          docker tag gresearchdev/armada-lookout-dev:${TAG} gresearchdev/armada-lookout:${RELEASE_TAG}
-          docker push gresearchdev/armada-lookout:${RELEASE_TAG}
-
-          docker pull gresearchdev/armada-binoculars-dev:${TAG}
-          docker tag gresearchdev/armada-binoculars-dev:${TAG} gresearchdev/armada-binoculars:${RELEASE_TAG}
-          docker push gresearchdev/armada-binoculars:${RELEASE_TAG}
+          docker pull ${{ matrix.devImage }}
+          docker tag ${{ matrix.devImage }} ${{ matrix.releaseImage }}
+          docker push ${{ matrix.releaseImage }}
 
           rm -v /home/runner/.docker/config.json
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
@@ -110,10 +99,13 @@ jobs:
 
           RELEASE_TAG=${GITHUB_REF##*/}
           echo release version is $RELEASE_TAG
+          yq -i '.version = "$RELEASE_TAG"' ${{ matrix.src_path }}/Chart.yaml
+          yq -i '.version = "$RELEASE_TAG"' ${{ matrix.src_path }}/values.yaml
+
           find ../armada \( -name "Chart.yaml" -o -name "values.yaml" \) -exec sed -i s/LATEST/$RELEASE_TAG/ {} +
 
           helm package ../armada/deployment/armada/ -d armada/
-          helm package ../armada/deployment/executor -d armada/
+          helm package ../armada/deployment/executor/ -d armada/
           helm package ../armada/deployment/executor-cluster-monitoring/ -d armada/
           helm package ../armada/deployment/lookout/ -d armada/
           helm package ../armada/deployment/lookout-migration/ -d armada/
