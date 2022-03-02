@@ -16,12 +16,12 @@ on:
       - '*'
     tags-ignore:
       - '**'
-    paths-ignore:
-      - 'docs/*.md'
-      - 'docs/quickstart'
-      - '*.md'
-      - '**/release.yml'
-      - '**/pages.yml'
+    # paths-ignore:
+    #   - 'docs/*.md'
+    #   - 'docs/quickstart'
+    #   - '*.md'
+    #   - '**/release.yml'
+    #   - '**/pages.yml'
 
 jobs:
   code_styles:
