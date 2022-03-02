@@ -94,7 +94,6 @@ jobs:
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
-
       - name: Run tests
         run: make tests
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
@@ -124,7 +123,6 @@ jobs:
           devImage: "gresearchdev/armada-lookout-dev"
         - localTag: armada-binoculars
           devImage: "gresearchdev/armada-binoculars-dev"
-
     env:
       DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
       DOCKERHUB_USER: ${{ secrets.DOCKERUSERNAME }}
@@ -169,6 +167,9 @@ jobs:
             ${{ env.GOPATH }}/src/github.com/G-Research/armada/bin/armadactl
 
       - name: Push Dev Image
+        env:
+          DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
+          DOCKERHUB_USER: ${{ secrets.DOCKERUSERNAME }}
         run: | 
           if [ -z "${DOCKERHUB_USER}" ] 
             then

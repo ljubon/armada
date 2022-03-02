@@ -15,22 +15,6 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 1
-      fail-fast: true
-      matrix:
-        include:
-        - devImage: "gresearchdev/armada-server-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-server:${GITHUB_REF##*/}"
-        - devImage: "gresearchdev/armada-executor-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-executor:${GITHUB_REF##*/}"
-        - devImage: "gresearchdev/armada-armadactl-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-armadactl:${GITHUB_REF##*/}"
-        - devImage: "gresearchdev/armada-lookout-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-lookout:${GITHUB_REF##*/}"
-        - devImage: "gresearchdev/armada-binoculars-dev:${GITHUB_SHA}"
-          releaseImage: "gresearchdev/armada-binoculars:${GITHUB_REF##*/}"
-
     steps:
       - name: Checkout code into the Go module directory
         uses: actions/checkout@v2
@@ -60,23 +44,47 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag: ${{ github.event.release.tag_name }} 
 
+  release-docker:
+    name: Push Docker images
+    runs-on: ubuntu-latest
+    needs: [release]
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+        - devImage: "ljubon/armada-server-dev"
+          releaseImage: "ljubon/armada-server"
+        - devImage: "ljubon/armada-executor-dev"
+          releaseImage: "ljubon/armada-executor"
+        - devImage: "ljubon/armada-armadactl-dev"
+          releaseImage: "ljubon/armada-armadactl"
+        - devImage: "ljubon/armada-lookout-dev"
+          releaseImage: "ljubon/armada-lookout"
+        - devImage: "ljubon/armada-binoculars-dev"
+          releaseImage: "ljubon/armada-binoculars"
+    steps:
+      - name: Checkout code into the Go module directory
+        uses: actions/checkout@v2
+        with:
+          path: ${{ env.GOPATH }}/src/github.com/G-Research/armada
+
       - name: Push Release Image
-        if: ${{ !github.event.repository.fork && env.DOCKERHUB_USER != "" }}
+        if: ${{ !github.event.repository.fork }}
         env:
           DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
           DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
+          RELEASE_TAG: ${GITHUB_REF##*/}
+          TAG: ${GITHUB_SHA}
         run: |
           echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
-
-          docker pull ${{ matrix.devImage }}
-          docker tag ${{ matrix.devImage }} ${{ matrix.releaseImage }}
-          docker push ${{ matrix.releaseImage }}
-
+          docker pull ${{ matrix.devImage }}:${{ env.TAG }}
+          docker tag ${{ matrix.devImage }}:${{ env.TAG }} ${{ matrix.releaseImage }}:${{ env.RELEASE_TAG }}
+          docker push ${{ matrix.releaseImage }}:${{ env.RELEASE_TAG }}
           rm -v /home/runner/.docker/config.json
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
   update-charts:
-    needs: [release]
+    needs: [release-docker]
     name: Publish Armada charts
     runs-on: ubuntu-latest
     steps:
