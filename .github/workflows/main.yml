@@ -123,9 +123,6 @@ jobs:
           devImage: "gresearchdev/armada-lookout-dev"
         - localTag: armada-binoculars
           devImage: "gresearchdev/armada-binoculars-dev"
-    env:
-      DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
-      DOCKERHUB_USER: ${{ secrets.DOCKERUSERNAME }}
     steps:
       - name: Install Go
         uses: actions/setup-go@v2
@@ -167,11 +164,8 @@ jobs:
             ${{ env.GOPATH }}/src/github.com/G-Research/armada/bin/armadactl
 
       - name: Push Dev Image
-        env:
-          DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
-          DOCKERHUB_USER: ${{ secrets.DOCKERUSERNAME }}
         run: | 
-          if [ -z "${DOCKERHUB_USER}" ] 
+          if [ -z "${{ secrets.DOCKERUSERNAME }}" ] 
             then
               echo "Do not push image inside fork."
               exit 0
@@ -185,7 +179,7 @@ jobs:
               TAG=branch-$(echo -n ${BRANCH} | sed 's|/|-|g')-${GITHUB_SHA}
           fi
 
-          echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
+          echo ${{ secrets.DOCKERTOKEN }} | docker login -u ${{ secrets.DOCKERUSERNAME }} --password-stdin
 
           docker tag ${{ matrix.localtag }} ${{ matrix.devImage }}:${TAG}
           docker push ${{ matrix.devImage }}:${TAG}

@@ -71,15 +71,13 @@ jobs:
       - name: Push Release Image
         if: ${{ !github.event.repository.fork }}
         env:
-          DOCKERHUB_PASS: ${{ secrets.DOCKERTOKEN }}
-          DOCKERHUB_USER: ${{ secrets.DOCKERHUB_USER }}
           RELEASE_TAG: ${GITHUB_REF##*/}
           TAG: ${GITHUB_SHA}
         run: |
-          echo ${DOCKERHUB_PASS} | docker login -u ${DOCKERHUB_USER} --password-stdin
-          docker pull ${{ matrix.devImage }}:${{ env.TAG }}
-          docker tag ${{ matrix.devImage }}:${{ env.TAG }} ${{ matrix.releaseImage }}:${{ env.RELEASE_TAG }}
-          docker push ${{ matrix.releaseImage }}:${{ env.RELEASE_TAG }}
+          echo ${{ secrets.DOCKERTOKEN }} | docker login -u ${{ secrets.DOCKERHUB_USER }} --password-stdin
+          docker pull ${{ matrix.devImage }}:${GITHUB_SHA}
+          docker tag ${{ matrix.devImage }}:${GITHUB_SHA} ${{ matrix.releaseImage }}:${GITHUB_REF##*/}
+          docker push ${{ matrix.releaseImage }}:${GITHUB_REF##*/}
           rm -v /home/runner/.docker/config.json
         working-directory: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
@@ -93,7 +91,7 @@ jobs:
         with:
           path: ${{ env.GOPATH }}/src/github.com/G-Research/armada
 
-      - name: Clone chart repo, update version and image tag to match current $RELEASE_TAG
+      - name: Clone chart repo, update version and image tag to match current ${GITHUB_REF##*/}
         run: |
           mkdir -p ${{ env.GOPATH }}/src/github.com/G-Research/charts
           mkdir -p $HOME/.ssh && echo "dummy" > $HOME/.ssh/known_hosts
