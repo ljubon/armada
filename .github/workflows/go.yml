@@ -40,6 +40,14 @@ jobs:
       - name: make junit-report
         run: make junit-report
 
+      - name: Scan
+        continue-on-error: false
+        uses: tidelift/alignment-action@main
+        env:
+          TIDELIFT_API_KEY: ${{ secrets.TIDELIFT_API_KEY }}
+          TIDELIFT_ORGANIZATION: ${{ secrets.TIDELIFT_ORGANIZATION }}
+          TIDELIFT_PROJECT: ${{ secrets.TIDELIFT_PROJECT }}
+
       - name: Upload junit report
         uses: actions/upload-artifact@v2.2.4
         with:
