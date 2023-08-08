@@ -12,6 +12,12 @@ Want to quickly get Armada running and test it? Install the [Pre-requisites](#pr
 mage localdev minimal testsuite
 ```
 
+To get the UI running, run:
+
+```bash
+mage ui
+```
+
 ## A note for Devs on Arm / Windows
 
 There is limited information on issues that appear on Arm / Windows Machines when running this setup.
@@ -92,9 +98,9 @@ go run cmd/testsuite/main.go test --tests "testsuite/testcases/basic/*" --junit 
 
 ### Running the UI
 
-In LocalDev, the UI is pre-built and served from the lookout component. To access it, open http://localhost:8089 in your browser.
+In LocalDev, the UI is built seperately with `mage ui`. To access it, open http://localhost:8089 in your browser.
 
-If you wish to run the UI locally, see the [UI Developer Guide](./developer/ui.md).
+For more information see the [UI Developer Guide](./developer/ui.md).
 
 
 ### Choosing components to run
@@ -104,6 +110,24 @@ You can set the `ARMADA_COMPONENTS` environment variable to choose which compone
 ```bash
 export ARMADA_COMPONENTS="server,executor"
 ```
+
+### Running Pulsar backed scheduler with LocalDev
+
+Ensure your local environment is completely torn down with
+```bash
+mage LocalDevStop
+```
+
+And then run
+
+```bash
+mage LocalDev minimal-pulsar
+```
+
+Ensure your local dev environment is completely torn down when switching between pulsar backed and legacy
+setups.
+
+If the eventsingester or the scheduleringester don't come up then just manually spin them up with `docker-compose up`.
 
 ## Debugging
 
