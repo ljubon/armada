@@ -13,10 +13,10 @@ require (
 	github.com/coreos/go-oidc v2.2.1+incompatible
 	github.com/coreos/pkg v0.0.0-20180928190104-399ea9e2e55f
 	github.com/go-openapi/analysis v0.22.2
-	github.com/go-openapi/jsonreference v0.20.4
+	github.com/go-openapi/jsonreference v0.20.5
 	github.com/go-openapi/loads v0.21.5
 	github.com/go-openapi/runtime v0.26.0
-	github.com/go-openapi/spec v0.20.14
+	github.com/go-openapi/spec v0.20.15
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.5.3
@@ -47,7 +47,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.15.0
-	github.com/stretchr/testify v1.8.4
+	github.com/stretchr/testify v1.9.0
 	github.com/weaveworks/promrus v1.2.0
 	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225
 	golang.org/x/net v0.22.0
@@ -73,7 +73,7 @@ require (
 	github.com/benbjohnson/immutable v0.4.3
 	github.com/go-openapi/errors v0.21.0
 	github.com/go-openapi/strfmt v0.21.10
-	github.com/go-openapi/swag v0.22.6
+	github.com/go-openapi/swag v0.22.10
 	github.com/go-openapi/validate v0.22.6
 	github.com/go-playground/validator/v10 v10.15.4
 	github.com/gogo/status v1.1.1
@@ -121,7 +121,7 @@ require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.2 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
-	github.com/go-openapi/jsonpointer v0.20.2 // indirect
+	github.com/go-openapi/jsonpointer v0.20.3 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
