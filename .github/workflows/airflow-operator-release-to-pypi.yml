@@ -13,7 +13,7 @@ jobs:
         with:
           cache-prefix: run-python-tests
       - name: Install Protoc
-        uses: arduino/setup-protoc@v2
+        uses: arduino/setup-protoc@v3
         with:
           version: '23.3'
           repo-token: ${{ secrets.GITHUB_TOKEN }}

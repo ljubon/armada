@@ -80,7 +80,7 @@ jobs:
           mkdir -p .kube/external
           go run github.com/magefile/mage@v1.14.0 -v localdev minimal
       - name: Install Protoc
-        uses: arduino/setup-protoc@v2
+        uses: arduino/setup-protoc@v3
         with:
           version: '23.3'
           repo-token: ${{ secrets.GITHUB_TOKEN }}
